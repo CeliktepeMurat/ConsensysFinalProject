@@ -137,6 +137,7 @@ class App extends Component {
       })
       
     }
+    
 
     routeChange = ()=> {
       let path = `./CreateGroup`;
@@ -177,7 +178,14 @@ class App extends Component {
                 <Button style={{height: 35, width: "100%"}} color='blue' onClick={() => {this.getGroup()}}>Get Group</Button>
                 </Menu.Item>
                 <Menu.Item position='right'>
-                <Link to="./CreateGroup" className="createGroupButton">Create Group</Link>
+                <Link to={{
+                  pathname:"./CreateGroup",
+                  contract: this.state.contract,
+                  web3: this.state.web3,
+                  accounts: this.state.accounts
+                  
+                }}
+                  className="createGroupButton">Create Group</Link>
                 </Menu.Item>
             </Menu>
           </div>

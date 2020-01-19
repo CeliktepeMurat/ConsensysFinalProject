@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import "./css/App.css";
-import lendingBorrowing from "./contracts/lendingBorrowing.json";
-import getWeb3 from "./getWeb3";
-import { Container, Menu} from 'semantic-ui-react'
+import { Container, Menu, Form, Button, Message} from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 import { Link } from 'react-router-dom'
 import { useHistory} from 'react-router-dom'
@@ -11,120 +9,70 @@ class CreateGroup extends Component {
 
   state = {
     groupName: "",
+    nameSurname: "",
     creator: "",
-    isOpen: "",
-    numberOfMember: "",
-    enterGroup: "Enter the group",
-    leaveGrouo: "Leave from Group",
-    isEnrolled: "",
-
-
-    // titles
-    groupNameTitle: "Group Name: ",
-    groupCreatorTitle: "Group Creator: ",
-    statusTitle: "Status: ",
-    numberofmemberTitle: "Number of Member: ",
+    isCreated: "",
 
     // web3
-    accounts: null,
-    contract: null,
-    web3: null,
-
-    //search
-    searchString: "",
-    errorMessage: "No Group founded"
+    contract: this.props.location.contract,
+    web3: this.props.location.web3,
 
 }
-  
-  componentDidMount = async () => {
-    try {
-      // Get network provider and web3 instance.
-      const web3 = await getWeb3();
-
-      // Use web3 to get the user's accounts.
-      const accounts = await web3.eth.getAccounts();
-
-      // Get the contract instance.
-      const networkId = await web3.eth.net.getId();
-      const deployedNetwork = lendingBorrowing.networks[networkId];
-      const instance = new web3.eth.Contract(
-        lendingBorrowing.abi,
-        deployedNetwork && deployedNetwork.address,
-      );
-
-      // Set web3, accounts, and contract to the state, and then proceed with an
-      // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, contract: instance,});
-    } catch (error) {
-      // Catch any errors for any of the above operations.
-      alert(
-        `Failed to load web3, accounts, or contract. Check console for details.`,
-      )
-      console.error(error);
-    }
-
-  };
 
     createGroup = async () =>  {
-      const { accounts, contract } = this.state;
+      const groupName = this.state.groupName;
+      const nameSurname = this.state.nameSurname;
+      const creatorAddress = this.state.creator;
+      const contract = this.state.contract;
         
-      await contract.methods.createGroup("group1", "murat").send({
-          from: accounts[0],
+      await contract.methods.createGroup(groupName, nameSurname).send({
+          from: creatorAddress,
           gas: 3000000
       })
+      this.setState({isCreated: true})
+      
     }
 
     routeChange = ()=> {
         let path = `./`;
         let history = useHistory();
         history.push(path);
-      }
-/* 
-    checkEnrolled = async (account, groupName) => {
-      const contract = this.state.contract;
-
-      const isEnrolled = await contract.methods.checkParticipant(groupName).call({from: account});
-      this.setState({
-        isEnrolled: isEnrolled
-      })
-
-    }
-    
-    getGroup = async () =>  {
-      const { accounts, contract } = this.state;
-
-      let defaultAccount = accounts[0]; 
-
-      const group = await contract.methods.getGroup(this.state.searchString).call({from: defaultAccount});
-
-      this.checkEnrolled(defaultAccount, this.state.searchString);
-
-      if (group[0] === "") {
-        this.setState({
-          groupName: "",
-          creator: "",
-          numberOfMember: "",
-          isOpen: ""
-        })
-      } else {
-        this.setState({
-          groupName: group[0],
-          creator: group[1],
-          isOpen: group[2],
-          numberOfMember: group[3],
-        })
-      }
     }
 
-    handleInputChange = (event) => {
-      const value = event.target.value;
-      this.setState({
-        searchString: value
-      })
-      
-    } */
+    handleSubmit = () => {
+      const { groupName, nameSurname, creator } = this.state
+  
+      this.setState({ groupName: groupName, nameSurname: nameSurname, creator: creator })
+    }
+
+    handleChange = (e, { name, value }) => this.setState({ [name]: value })
 
   render() {
+    let message;
+
+    const isCreated = this.state.isCreated;
+
+    if (isCreated) {
+      message = <Form success>
+                  <Message
+                    success
+                    header='Group successfully created.'
+                  />
+                </Form>
+    }
+    else if (isCreated === "") {
+      message = ""
+    }
+    else {
+      message = <Form error>
+                <Message
+                  error
+                  header='Grup is not created'
+                />
+              </Form>
+    }
+
+    
     return (
         <Container className="App">
           <div>
@@ -134,9 +82,25 @@ class CreateGroup extends Component {
                 </Menu.Item>
                 <Menu.Item style={{width: "15%"}}>
                 <Link to="./" className="BackGroupButton">Back Group Page</Link>
-
                 </Menu.Item>
             </Menu>
+
+            <Form onSubmit={this.createGroup} className="Form">
+              <Form.Group widths={2}>
+                <Form.Input onChange={this.handleChange} name="groupName" label='Group Name' placeholder='Enter Group Name' />
+                <Form.Input onChange={this.handleChange} name="nameSurname" label='Name and Surname' placeholder='Enter Your Name and Surname' />
+              </Form.Group>
+              <Form.Group widths={2}>
+              <Form.Input onChange={this.handleChange} name="creator" label='Creator of Group' placeholder="Enter your account address"/>
+                <Form.Input label='Number of Member' readOnly placeholder="0"/>
+              </Form.Group>
+              <Form.Checkbox label='I agree to the Terms and Conditions' />
+              <Button type='submit'>Create</Button>
+            </Form>
+            <Form.Field>
+            {message}
+            </Form.Field>
+            
           </div>
         </Container>
       
