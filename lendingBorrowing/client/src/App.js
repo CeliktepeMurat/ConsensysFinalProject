@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import "./css/App.css";
 import lendingBorrowing from "./contracts/lendingBorrowing.json";
 import getWeb3 from "./getWeb3";
-import { Container, Menu, Input, Button, Card} from 'semantic-ui-react'
+import { Container, Menu, Input, Button, Card, Form,} from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 import { Link } from 'react-router-dom'
 import { useHistory} from 'react-router-dom'
@@ -78,6 +78,16 @@ class App extends Component {
     })
   } */
 
+  enterGroup = async () => {
+    const contract = this.state.contract;
+    const groupName = this.state.groupName;
+    const defaultAccount = this.state.account;
+
+    await contract.methods.enroll(groupName, defaultAccount, )
+
+
+  }
+
   leaveGroup = async () => {
     const contract = this.state.contract;
     const groupName = this.state.groupName;
@@ -86,8 +96,7 @@ class App extends Component {
     await contract.methods.leaveGroup(groupName).send({from: defaultAccount});
     this.checkEnrolled(defaultAccount, groupName);
     
-    console.log(this.state.isEnrolled);
-    
+    this.getGroup();
   }
 
     checkEnrolled = async (account, groupName) => {
@@ -101,15 +110,12 @@ class App extends Component {
     }
     
     getGroup = async () =>  {
-      const accounts = this.state.accounts;
       const contract = this.state.contract;
+      const account = this.state.account;
 
-      const defaultAccount = accounts[0]; 
-
-      const group = await contract.methods.getGroup(this.state.searchString).call({from: defaultAccount});
-
+      const group = await contract.methods.getGroup(this.state.searchString).call({from: account});
       
-      this.checkEnrolled(defaultAccount, this.state.searchString);
+      this.checkEnrolled(account, this.state.searchString);
 
       if (group[0] === "") {
         this.setState({
@@ -117,7 +123,8 @@ class App extends Component {
           creator: "",
           numberOfMember: "",
           isOpen: "",
-          account: defaultAccount,
+          account: account,
+          
         })
       } else {
         this.setState({
@@ -125,24 +132,31 @@ class App extends Component {
           creator: group[1],
           isOpen: group[2],
           numberOfMember: group[3],
-          account: defaultAccount,
+          account: account,
         })
       }
     }
 
-    handleInputChange = (event) => {
+    handleSearchInput = (event) => {
       const value = event.target.value;
       this.setState({
         searchString: value
       })
-      
+    }
+    handleAddressInput = (event) => {
+      const value = event.target.value;
+      this.setState({
+        account: value
+      })
     }
     
 
     routeChange = ()=> {
       let path = `./CreateGroup`;
+      let path2 = `./GroupProfile`
       let history = useHistory();
       history.push(path);
+      history.push(path2);
     }
 
   render() {
@@ -152,17 +166,38 @@ class App extends Component {
     const isEnrolled = this.state.isEnrolled;
     
     if (!isEnrolled && this.state.isOpen === true) {
-      button1 = <Card className="detailsButton">
-                <Button inverted color='green'>{this.state.enterGroupText}</Button>
-              </Card>
+      button1 = 
+              <Form onSubmit={this.createGroup} className="Form">
+                <Form.Group>
+                  <Form.Input className="formInput" label='Group Name' placeholder='Enter Group Name' />
+                </Form.Group>
+                <Form.Group>
+                <Form.Input className="formInput" label='Name and Surname' placeholder='Enter Your Name and Surname' />
+                </Form.Group>
+           
+                <Form.Checkbox label='I agree to the Terms and Conditions' />
+                <Button className="detailsButton" onClick={() => {this.enterGroup()}} inverted color='green'>{this.state.enterGroupText}</Button>                
+              </Form>
+
     } 
     else if (isEnrolled && this.state.isOpen === true) {
-      button2 = <Card className="detailsButton">
-                  <Button onClick={() => {this.leaveGroup()}} inverted color='red'>{this.state.leaveGroupText}</Button>
-                </Card>
+      button2 = <Form className="detailsButton">
+                  <Form.Group>
+                    <Button className="leaveGroupButton" onClick={() => {this.leaveGroup()}} inverted color='red'>{this.state.leaveGroupText}</Button>
+                    <Link to={{
+                      pathname:"./GroupProfile",
+                      contract: this.state.contract,
+                      web3: this.state.web3,
+                      account: this.state.account,
+                      groupName: this.state.groupName,
+                      
+                    }}
+                      className="moreDetailsButton">View Group Profile</Link>
+                  </Form.Group>
+                </Form>
     }
     else if(this.state.isOpen === "") {
-      button1 = <Card className="detailsButton">
+      button1 = <Card>
                 <Card.Content
                   description="No group founded"
                 />
@@ -173,11 +208,11 @@ class App extends Component {
         <Container className="App">
           <div>
             <Menu>
-                <Menu.Item style={{width: "40%"}}>
-                <Input style={{marginRight: 10}} onChange={this.handleInputChange} className='icon' placeholder='Search Group' />
-                <Button style={{height: 35, width: "100%"}} color='blue' onClick={() => {this.getGroup()}}>Get Group</Button>
-                </Menu.Item>
-                <Menu.Item position='right'>
+                <Menu.Item style={{width: "100%"}}>
+                <Input style={{marginRight: 10}} onChange={this.handleSearchInput} className='icon' placeholder='Search Group' />
+                <Input style={{marginRight: 10}} onChange={this.handleAddressInput} className='icon' placeholder='Enter Your Address' />
+                <Button style={{height: 35, width: "30%"}} color='blue' onClick={() => {this.getGroup()}}>Get Group</Button>
+         
                 <Link to={{
                   pathname:"./CreateGroup",
                   contract: this.state.contract,

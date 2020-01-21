@@ -287,15 +287,13 @@ contract lendingBorrowing {
     returns(string memory, address, bool, uint) {
         return (groups[_groupId].groupId, groups[_groupId].creator, groups[_groupId].isOpen, groups[_groupId].numberOfMember);
     }
-    
-    function checkDebt(string memory _groupId)
+
+    function checkMemberDebtStatus(string memory _groupId)
     public 
     view 
-    checkEnrolled(_groupId)
-    checkGroupOpen(_groupId)
-    returns(uint) 
+    returns(uint, uint) 
     {
-        return groups[_groupId].borrowers[msg.sender];
+        return (groups[_groupId].borrowers[msg.sender], groups[_groupId].lenders[msg.sender]);
     }
 }
 
