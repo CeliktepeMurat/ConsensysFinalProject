@@ -16,7 +16,7 @@ class CreateGroup extends Component {
     // web3
     contract: this.props.location.contract,
     web3: this.props.location.web3,
-
+    accounts: this.props.location.accounts
 }
 
     createGroup = async () =>  {
@@ -81,7 +81,13 @@ class CreateGroup extends Component {
                 <h3>Create a New Group</h3>
                 </Menu.Item>
                 <Menu.Item style={{width: "15%"}}>
-                <Link to="./" className="BackGroupButton">Back Group Page</Link>
+                <Link to={{
+                      pathname:"./",
+                      contract: this.state.contract,
+                      web3: this.state.web3,
+                      accounts: this.state.accounts
+                      
+                    }} className="BackGroupButton">Back Group Page</Link>
                 </Menu.Item>
             </Menu>
 

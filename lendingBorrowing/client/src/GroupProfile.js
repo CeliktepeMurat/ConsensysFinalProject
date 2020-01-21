@@ -17,14 +17,15 @@ class GroupProfile extends Component {
 
         // web3
         contract: "",
-        web3: this.props.location.web3,
-        account: "",
+        web3: "",
+        accounts: "",
 
     }
 
     componentDidMount = async () => {
         const account = this.props.location.account;
-        const contract = this.props.location.contract; 
+        const contract = this.props.location.contract;
+        const web3 = this.props.location.web3; 
 
         const group = await contract.methods.getGroup(this.state.groupName).call({from: account});
         const debt = await contract.methods.checkMemberDebtStatus(this.state.groupName).call({from: account});
@@ -38,7 +39,8 @@ class GroupProfile extends Component {
             amountBorrowed: debt[0],
             
             account: account,
-            contract: contract
+            contract: contract,
+            web3: web3
         })
     }
     
@@ -60,7 +62,13 @@ class GroupProfile extends Component {
                 <h3>{this.state.groupName}</h3>
                 </Menu.Item>
                 <Menu.Item style={{width: "15%"}}>
-                <Link to="./" className="BackGroupButton">Back Group Page</Link>
+                <Link to={{
+                      pathname:"./",
+                      contract: this.state.contract,
+                      web3: this.state.web3,
+                      accounts: this.state.accounts
+                      
+                    }} className="BackGroupButton">Back Group Page</Link>
                 </Menu.Item>
             </Menu>
 

@@ -68,6 +68,7 @@ class App extends Component {
     }
 
   };
+  
 /* 
   createGroup = async () =>  {
     const { accounts, contract } = this.state;
@@ -85,13 +86,16 @@ class App extends Component {
 
     await contract.methods.enroll(groupName, defaultAccount, )
 
-
   }
 
   leaveGroup = async () => {
-    const contract = this.state.contract;
+    let contract = this.props.location.contract;
     const groupName = this.state.groupName;
     const defaultAccount = this.state.account;
+    
+    if (contract === undefined) {
+      contract = this.state.contract
+    }
 
     await contract.methods.leaveGroup(groupName).send({from: defaultAccount});
     this.checkEnrolled(defaultAccount, groupName);
@@ -99,23 +103,32 @@ class App extends Component {
     this.getGroup();
   }
 
-    checkEnrolled = async (account, groupName) => {
-      const contract = this.state.contract;
-
-      const isEnrolled = await contract.methods.checkParticipant(groupName).call({from: account});
-      this.setState({
-        isEnrolled: isEnrolled
-      })
-
+  checkEnrolled = async (account, groupName) => {
+    let contract = this.props.location.contract;
+    if (contract === undefined) {
+      contract = this.state.contract
     }
+
+    const isEnrolled = await contract.methods.checkParticipant(groupName).call({from: account});
+    this.setState({
+      isEnrolled: isEnrolled
+    })
+
+  }
     
     getGroup = async () =>  {
-      const contract = this.state.contract;
-      const account = this.state.account;
 
-      const group = await contract.methods.getGroup(this.state.searchString).call({from: account});
+      let contract = this.props.location.contract;
+      let accounts = this.props.location.accounts;
+
+      if (contract === undefined) {
+        contract = this.state.contract
+        accounts = this.state.accounts
+      }
+
+      const group = await contract.methods.getGroup(this.state.searchString).call({from: accounts[0]});
       
-      this.checkEnrolled(account, this.state.searchString);
+      this.checkEnrolled(this.state.account, this.state.searchString);
 
       if (group[0] === "") {
         this.setState({
@@ -123,7 +136,7 @@ class App extends Component {
           creator: "",
           numberOfMember: "",
           isOpen: "",
-          account: account,
+          account: accounts[0],
           
         })
       } else {
@@ -132,7 +145,7 @@ class App extends Component {
           creator: group[1],
           isOpen: group[2],
           numberOfMember: group[3],
-          account: account,
+          account: accounts[0],
         })
       }
     }
