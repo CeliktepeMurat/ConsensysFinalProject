@@ -296,24 +296,3 @@ contract lendingBorrowing {
         return (groups[_groupId].borrowers[msg.sender], groups[_groupId].lenders[msg.sender]);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

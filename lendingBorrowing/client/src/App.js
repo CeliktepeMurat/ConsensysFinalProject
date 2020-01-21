@@ -68,16 +68,6 @@ class App extends Component {
     }
 
   };
-  
-/* 
-  createGroup = async () =>  {
-    const { accounts, contract } = this.state;
-      
-    await contract.methods.createGroup("group1", "murat").send({
-        from: accounts[0],
-        gas: 3000000
-    })
-  } */
 
   enterGroup = async () => {
     const contract = this.state.contract;

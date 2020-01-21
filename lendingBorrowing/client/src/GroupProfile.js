@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./css/App.css";
-import { Container, Menu,Card} from 'semantic-ui-react'
+import { Container, Menu, Card, Header, Table, Button} from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 import { Link } from 'react-router-dom'
 import { useHistory} from 'react-router-dom'
@@ -117,7 +117,43 @@ class GroupProfile extends Component {
                 </Card>
                 </Card.Group>
             </div> 
-          
+            <h3 style={{paddingTop: 40, paddingBottom: 20}}>Enrolling Requests</h3>
+            <Table celled padded>
+                <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell singleLine>Name and Surname</Table.HeaderCell>
+                    <Table.HeaderCell singleLine>Member Address</Table.HeaderCell>
+                    <Table.HeaderCell>Completed</Table.HeaderCell>
+                    <Table.HeaderCell>Approvals Count</Table.HeaderCell>
+                    <Table.HeaderCell></Table.HeaderCell>
+                </Table.Row>
+                </Table.Header>
+
+                <Table.Body>
+                <Table.Row>
+                    <Table.Cell singleLine>
+                    <Header as='h3' textAlign='center'>
+                        Aybars Dorman
+                    </Header>
+                    </Table.Cell>
+                    <Table.Cell singleLine>0x2094058c474cfa0731afce83fdb529a4083a8ea3</Table.Cell>
+                    <Table.Cell>
+                    False
+                    </Table.Cell>
+                    <Table.Cell textAlign='right' singleLine>
+                    80% <br />
+                    <a href='#'>18 Approval</a>
+                    </Table.Cell>
+                    <Table.Cell textAlign="center">
+                    <Button.Group>
+                        <Button negative>Reject</Button>
+                        <Button.Or />
+                        <Button positive>Confirm</Button>
+                    </Button.Group>
+                    </Table.Cell>
+                </Table.Row>
+                </Table.Body>
+            </Table>
           </div>
         </Container>
       
