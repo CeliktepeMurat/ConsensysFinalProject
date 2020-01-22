@@ -27,7 +27,6 @@ class App extends Component {
     numberofmemberTitle: "Number of Member: ",
 
     // web3
-    accounts: null,
     contract: null,
     web3: null,
 
@@ -36,7 +35,10 @@ class App extends Component {
     errorMessage: "No Group founded",
 
     // current user
-    account: null
+    account: this.props.location.account,
+
+    // User
+    nameSurname: ""
 
 }
   
@@ -46,7 +48,9 @@ class App extends Component {
       const web3 = await getWeb3();
 
       // Use web3 to get the user's accounts.
-      const accounts = await web3.eth.getAccounts();
+      const account = await web3.eth.getAccounts();
+      
+      
 
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
@@ -58,7 +62,7 @@ class App extends Component {
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, contract: instance,});
+      this.setState({ web3, account: account[0], contract: instance,});
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -70,25 +74,32 @@ class App extends Component {
   };
 
   enterGroup = async () => {
-    const contract = this.state.contract;
+    let contract = this.props.location.contract;
     const groupName = this.state.groupName;
-    const defaultAccount = this.state.account;
+    const account = this.state.account;
+    const nameSurname = this.state.nameSurname;
+    
+    
+    if (contract === undefined) {
+      contract = this.state.contract
+    }
 
-    await contract.methods.enroll(groupName, defaultAccount, )
+    await contract.methods.enroll(groupName, nameSurname).send({from: account})
+    
 
   }
 
   leaveGroup = async () => {
     let contract = this.props.location.contract;
     const groupName = this.state.groupName;
-    const defaultAccount = this.state.account;
+    const account = this.state.account;
     
     if (contract === undefined) {
       contract = this.state.contract
     }
 
-    await contract.methods.leaveGroup(groupName).send({from: defaultAccount});
-    this.checkEnrolled(defaultAccount, groupName);
+    await contract.methods.leaveGroup(groupName).send({from: account});
+    this.checkEnrolled(account, groupName);
     
     this.getGroup();
   }
@@ -99,7 +110,9 @@ class App extends Component {
       contract = this.state.contract
     }
 
-    const isEnrolled = await contract.methods.checkParticipant(groupName).call({from: account});
+    const isEnrolled = await contract.methods.checkParticipant(groupName).call({
+      from: account
+    });
     this.setState({
       isEnrolled: isEnrolled
     })
@@ -109,16 +122,19 @@ class App extends Component {
     getGroup = async () =>  {
 
       let contract = this.props.location.contract;
-      let accounts = this.props.location.accounts;
-
-      if (contract === undefined) {
+      let account = this.props.location.account;
+      
+      
+      if (contract === undefined && account === undefined) {
         contract = this.state.contract
-        accounts = this.state.accounts
+        account = this.state.account
       }
 
-      const group = await contract.methods.getGroup(this.state.searchString).call({from: accounts[0]});
+      const group = await contract.methods.getGroup(this.state.searchString).call({
+        from: account
+      });
       
-      this.checkEnrolled(this.state.account, this.state.searchString);
+      this.checkEnrolled(account, this.state.searchString);
 
       if (group[0] === "") {
         this.setState({
@@ -126,7 +142,7 @@ class App extends Component {
           creator: "",
           numberOfMember: "",
           isOpen: "",
-          account: accounts[0],
+          account: account,
           
         })
       } else {
@@ -135,7 +151,7 @@ class App extends Component {
           creator: group[1],
           isOpen: group[2],
           numberOfMember: group[3],
-          account: accounts[0],
+          account: account,
         })
       }
     }
@@ -146,10 +162,11 @@ class App extends Component {
         searchString: value
       })
     }
-    handleAddressInput = (event) => {
+
+    handleNameSurnameInput = (event) => {
       const value = event.target.value;
       this.setState({
-        account: value
+        nameSurname: value
       })
     }
     
@@ -170,27 +187,29 @@ class App extends Component {
     
     if (!isEnrolled && this.state.isOpen === true) {
       button1 = 
-              <Form onSubmit={this.createGroup} className="Form">
+              <Form style={{marginTop: "4em"}}>
                 <Form.Group>
-                  <Form.Input className="formInput" label='Group Name' placeholder='Enter Group Name' />
+                <Form.Input onChange={this.handleNameSurnameInput} className="formInput" label='Name and Surname' placeholder='Enter Your Name and Surname' />
                 </Form.Group>
-                <Form.Group>
-                <Form.Input className="formInput" label='Name and Surname' placeholder='Enter Your Name and Surname' />
-                </Form.Group>
-           
                 <Form.Checkbox label='I agree to the Terms and Conditions' />
-                <Button className="detailsButton" onClick={() => {this.enterGroup()}} inverted color='green'>{this.state.enterGroupText}</Button>                
+                <Button onClick={() => this.enterGroup()} className="detailsButton" inverted color='green'>{this.state.enterGroupText}</Button>                
               </Form>
 
     } 
     else if (isEnrolled && this.state.isOpen === true) {
+      let contract = this.state.contract;
+      let web3 = this.state.web3;
+      if (contract === undefined) {
+        contract = this.props.location.contract;
+        web3 = this.props.account.web3;
+      }
       button2 = <Form className="detailsButton">
                   <Form.Group>
                     <Button className="leaveGroupButton" onClick={() => {this.leaveGroup()}} inverted color='red'>{this.state.leaveGroupText}</Button>
                     <Link to={{
                       pathname:"./GroupProfile",
-                      contract: this.state.contract,
-                      web3: this.state.web3,
+                      contract: contract,
+                      web3: web3,
                       account: this.state.account,
                       groupName: this.state.groupName,
                       
@@ -211,16 +230,18 @@ class App extends Component {
         <Container className="App">
           <div>
             <Menu>
-                <Menu.Item style={{width: "100%"}}>
+                <Menu.Item style={{width: "80%"}}>
                 <Input style={{marginRight: 10}} onChange={this.handleSearchInput} className='icon' placeholder='Search Group' />
-                <Input style={{marginRight: 10}} onChange={this.handleAddressInput} className='icon' placeholder='Enter Your Address' />
-                <Button style={{height: 35, width: "30%"}} color='blue' onClick={() => {this.getGroup()}}>Get Group</Button>
+{/*             <Input style={{marginRight: 10}} onChange={this.handleAddressInput} className='icon' placeholder='Enter Your Address' />
+ */}            <Button style={{height: 35, width: "25%"}} color='blue' onClick={() => {this.getGroup()}}>Get Group</Button>
+                </Menu.Item>
+                <Menu.Item style={{width: "20%"}}>
          
                 <Link to={{
                   pathname:"./CreateGroup",
                   contract: this.state.contract,
                   web3: this.state.web3,
-                  accounts: this.state.accounts
+                  account: this.state.account
                   
                 }}
                   className="createGroupButton">Create Group</Link>

@@ -7,7 +7,8 @@ module.exports = {
   networks: {
     develop: {
       port: 8545,
-      gas: 10000000
+      gas: 60000000,
+      gasPrice: 0
     },
     solc: {
       optimizer: {

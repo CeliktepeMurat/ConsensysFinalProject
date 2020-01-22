@@ -4,6 +4,8 @@ import { Container, Menu, Card, Header, Table, Button} from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 import { Link } from 'react-router-dom'
 import { useHistory} from 'react-router-dom'
+import lendingBorrowing from "./contracts/lendingBorrowing.json";
+import getWeb3 from "./getWeb3";
 
 class GroupProfile extends Component {
 
@@ -18,17 +20,75 @@ class GroupProfile extends Component {
         // web3
         contract: "",
         web3: "",
-        accounts: "",
+        account: "",
+
+        //Request
+        nameSurname: [],
+        memberAddress: [],
+        isCompleted: [],
+        ApprovalsCount: [],
+        requestCount: 0,
+        requests: []
 
     }
 
     componentDidMount = async () => {
-        const account = this.props.location.account;
-        const contract = this.props.location.contract;
-        const web3 = this.props.location.web3; 
 
-        const group = await contract.methods.getGroup(this.state.groupName).call({from: account});
-        const debt = await contract.methods.checkMemberDebtStatus(this.state.groupName).call({from: account});
+        // Get network provider and web3 instance.
+        const web3 = await getWeb3();
+    
+        // Use web3 to get the user's accounts.
+        const account = await web3.eth.getAccounts();
+        
+    
+        // Get the contract instance.
+        const networkId = await web3.eth.net.getId();
+        const deployedNetwork = lendingBorrowing.networks[networkId];
+        const instance = new web3.eth.Contract(
+            lendingBorrowing.abi,
+            deployedNetwork && deployedNetwork.address,
+        );
+            
+        
+        this.setState({        
+            account: account[0],
+            contract: instance,
+            web3: web3
+        },this.getInfo)
+          
+    }
+
+    getInfo = async () => {
+        const contract = this.state.contract;
+        const account = this.state.account;
+        let groupName = "";
+
+        if (this.state.groupName === undefined) {
+            groupName = "group2"
+        } 
+        console.log(account);
+        
+        const group = await contract.methods.getGroup(groupName).call({from: account});
+        const debt = await contract.methods.checkMemberDebtStatus(groupName).call({from: account});
+        
+        let requestCount = group[4];
+
+        let request = await contract.methods.getRequest("group2",0).call({from: account});
+                
+        /* for (let index = 0; index < requestCount; index++) {
+            
+            let request = await contract.methods.getRequest(groupName,0).call({from: account});
+            console.log(request);
+            
+            this.setState({
+                nameSurname: [...this.state.nameSurname, request[1]],
+                memberAddress: [...this.state.memberAddress, request[2]],
+                isCompleted: [...this.state.isCompleted, request[3]],
+                ApprovalsCount: [...this.state.ApprovalsCount, request[4]],
+                requests: [...this.state.requests, request],
+            })
+        } */
+        
 
         this.setState({
             groupName: group[0],
@@ -37,23 +97,56 @@ class GroupProfile extends Component {
             numberOfMember: group[3],
             amountLended: debt[1],
             amountBorrowed: debt[0],
-            
-            account: account,
-            contract: contract,
-            web3: web3
+            requestCount: requestCount,
         })
+        
     }
     
-
-
     routeChange = ()=> {
         let path = `./`;
         let history = useHistory();
         history.push(path);
     }
 
-  render() {
-    
+    ConfirmRequest = async (memberAddress, index) => {
+        const contract = this.state.contract;
+        const account = this.state.account;
+        const groupName = this.state.groupName;
+
+        await contract.methods.approveRequest(memberAddress, groupName, index).send({from: account})
+        this.getInfo();
+        
+    }
+
+    getCell = () => {
+            return (this.state.requests.map((request, index) => (
+                <Table.Row key={index}>
+                    <Table.Cell singleLine>
+                    <Header as='h4' textAlign='center'>
+                        {this.state.nameSurname[index]}
+                    </Header>
+                    </Table.Cell>
+                    <Table.Cell singleLine>{this.state.memberAddress[index]}</Table.Cell>
+                    <Table.Cell>
+                    {String(this.state.isCompleted[index])}
+                    </Table.Cell>
+                    <Table.Cell textAlign='right' singleLine>
+                    {/* 80% <br /> */}
+                    {this.state.ApprovalsCount[index]} Approval
+                    </Table.Cell>
+                    <Table.Cell textAlign="center">
+                    <Button.Group>
+                        <Button onClick={() => this.rejectRequest(this.state.memberAddress[index], index)} negative>Reject</Button>
+                        <Button.Or />
+                        <Button onClick={() => this.ConfirmRequest(this.state.memberAddress[index], index)} positive>Confirm</Button>
+                    </Button.Group>
+                    </Table.Cell>
+                </Table.Row>
+            )))
+    }
+
+
+  render() {    
     return (
         <Container className="App">
           <div>
@@ -130,28 +223,8 @@ class GroupProfile extends Component {
                 </Table.Header>
 
                 <Table.Body>
-                <Table.Row>
-                    <Table.Cell singleLine>
-                    <Header as='h3' textAlign='center'>
-                        Aybars Dorman
-                    </Header>
-                    </Table.Cell>
-                    <Table.Cell singleLine>0x2094058c474cfa0731afce83fdb529a4083a8ea3</Table.Cell>
-                    <Table.Cell>
-                    False
-                    </Table.Cell>
-                    <Table.Cell textAlign='right' singleLine>
-                    80% <br />
-                    <a href='#'>18 Approval</a>
-                    </Table.Cell>
-                    <Table.Cell textAlign="center">
-                    <Button.Group>
-                        <Button negative>Reject</Button>
-                        <Button.Or />
-                        <Button positive>Confirm</Button>
-                    </Button.Group>
-                    </Table.Cell>
-                </Table.Row>
+                {this.getCell()}
+                
                 </Table.Body>
             </Table>
           </div>

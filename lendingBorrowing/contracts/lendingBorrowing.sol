@@ -19,6 +19,7 @@ contract lendingBorrowing {
         uint groupBalance;
         bool isOpen;
         uint numberOfMember;
+        uint requestCount;
         
         mapping(address => bool) members;
         mapping(address => uint) lenders;
@@ -28,16 +29,20 @@ contract lendingBorrowing {
     struct Request {
         string groupId;
         string nameSurname;
+        uint requestCount;
         address candidate;
         bool complete;
         uint approvalCount;
         mapping(address => bool) approvals;
     }
+
+    mapping(string => Request[]) requestsArray;
+    mapping(string => Request) requests;
+    mapping(address => Request) requestsAddressArray;
     
-    mapping(address => Request) requests;
-    mapping(string => Group) groups;
+    mapping(string => Group) public groups;
     mapping(address => Participant) participants;
-    string[] public groupList;
+    
     
     event LogCreatedRequest(string _groupId, string _nameSurname, address _participantAddress);
     event LogCreatedGroup(string _groupId, uint numberOfMember, address _creator);
@@ -65,12 +70,9 @@ contract lendingBorrowing {
         require(!groups[_groupId].isOpen,"group is already created");
         
         // Create a new group
-        Group memory newGroup = Group({groupId: _groupId, creator: msg.sender, groupBalance: 0, isOpen: true, numberOfMember: 1});
+        Group memory newGroup = Group({groupId: _groupId, creator: msg.sender, groupBalance: 0, isOpen: true, numberOfMember: 1, requestCount: 0});
         groups[_groupId] = newGroup;
         emit LogCreatedGroup(_groupId, groups[_groupId].numberOfMember, groups[_groupId].creator);
-        
-        // add group list
-        groupList.push(_groupId);
 
         // add msg.sender to group as a member
         groups[_groupId].members[msg.sender] = true;
@@ -100,32 +102,37 @@ contract lendingBorrowing {
     }
     
     
-    function enroll(string memory _groupId, address _memberAddress, string memory _nameSurname) 
-    private 
+    function enroll(string memory _groupId, string memory _nameSurname) 
+    public 
     checkGroupOpen(_groupId)
     {
         // check is already enrolled to group
-        require(participants[_memberAddress].enrolledGroup[_groupId] != true, "You are already in this group");
+        require(participants[msg.sender].enrolledGroup[_groupId] != true, "You are already in this group");
         
         // Create Request to enroll
         Request memory newRequest = Request({
             groupId: _groupId,
             nameSurname: _nameSurname,
-            candidate: _memberAddress,
+            candidate: msg.sender,
             complete: false,
-            approvalCount: 0
+            approvalCount: 0,
+            requestCount: 0
         });
+        requestsArray[_groupId].push(newRequest);
+        requests[_groupId] = newRequest;
+        requestsAddressArray[msg.sender] = newRequest;
+        groups[_groupId].requestCount += 1;
         
-        requests[_memberAddress] = newRequest;
-        
-        emit LogCreatedRequest(_groupId, _nameSurname, _memberAddress);
+        emit LogCreatedRequest(_groupId, _nameSurname, msg.sender);
         
     }
     
-    function approveRequest(address _candidateAddress) 
+    function approveRequest(address _candidateAddress, string memory _groupId, uint _id) 
     public 
     {
-        Request storage request = requests[_candidateAddress];
+        require(requestsAddressArray[_candidateAddress].complete == false);
+        Request storage request = requestsAddressArray[_candidateAddress];
+        
         
         // check that this member did not approve 
         require(!request.approvals[_candidateAddress]);
@@ -134,21 +141,24 @@ contract lendingBorrowing {
         request.approvalCount++;
         
         // if 80% of members approve that candidate can enroll, then add candidate to group
-        if ((groups[request.groupId].numberOfMember * 80) / 100 < request.approvalCount) {
-            addCandidateToGroup(_candidateAddress);
+        if (groups[_groupId].numberOfMember == request.approvalCount) {
+            addCandidateToGroup(_candidateAddress, _groupId);
             request.complete = true;
+            requestsArray[_groupId][_id].complete = true;
+            groups[_groupId].requestCount -= 1;
         }
         
         emit LogApprovedRequest(msg.sender, request.approvalCount);
         
     }
     
-    function addCandidateToGroup(address _memberAddress) 
-    public 
+    function addCandidateToGroup(address _memberAddress, string memory _groupId) 
+    private 
     {
         // adding the participant to group
-        Request memory request = requests[_memberAddress];
+        Request memory request = requests[_groupId];
         groups[request.groupId].members[_memberAddress] = true;
+        groups[_groupId].numberOfMember += 1;
         
         participants[request.candidate] = Participant(request.groupId, request.candidate, request.nameSurname);
         participants[request.candidate].enrolledGroup[request.groupId] = true;
@@ -284,15 +294,24 @@ contract lendingBorrowing {
     function getGroup(string memory _groupId) 
     public 
     view 
-    returns(string memory, address, bool, uint) {
-        return (groups[_groupId].groupId, groups[_groupId].creator, groups[_groupId].isOpen, groups[_groupId].numberOfMember);
+    returns(string memory, address, bool, uint, uint) {
+        return (groups[_groupId].groupId, groups[_groupId].creator, groups[_groupId].isOpen, groups[_groupId].numberOfMember, groups[_groupId].requestCount);
     }
 
     function checkMemberDebtStatus(string memory _groupId)
     public 
     view 
+    checkGroupOpen(_groupId)
     returns(uint, uint) 
     {
         return (groups[_groupId].borrowers[msg.sender], groups[_groupId].lenders[msg.sender]);
     }
+
+    function getRequest(string memory _groupId, uint _id) 
+    public 
+    view 
+    returns(string memory, address, bool, uint) {
+        return (requestsArray[_groupId][_id].nameSurname, requestsArray[_groupId][_id].candidate, requestsArray[_groupId][_id].complete, requestsArray[_groupId][_id].approvalCount);
+    }
+    
 }
