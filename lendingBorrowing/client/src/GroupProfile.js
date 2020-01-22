@@ -4,8 +4,6 @@ import { Container, Menu, Card, Header, Table, Button} from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 import { Link } from 'react-router-dom'
 import { useHistory} from 'react-router-dom'
-import lendingBorrowing from "./contracts/lendingBorrowing.json";
-import getWeb3 from "./getWeb3";
 
 class GroupProfile extends Component {
 
@@ -18,9 +16,9 @@ class GroupProfile extends Component {
         amountLended: "",
 
         // web3
-        contract: "",
-        web3: "",
-        account: "",
+        contract: this.props.location.contract,
+        web3: this.props.location.web3,
+        account: this.props.location.account,
 
         //Request
         nameSurname: [],
@@ -34,71 +32,53 @@ class GroupProfile extends Component {
 
     componentDidMount = async () => {
 
-        // Get network provider and web3 instance.
-        const web3 = await getWeb3();
-    
-        // Use web3 to get the user's accounts.
-        const account = await web3.eth.getAccounts();
-        
-    
-        // Get the contract instance.
-        const networkId = await web3.eth.net.getId();
-        const deployedNetwork = lendingBorrowing.networks[networkId];
-        const instance = new web3.eth.Contract(
-            lendingBorrowing.abi,
-            deployedNetwork && deployedNetwork.address,
-        );
+        if (this.state.contract === undefined) {
+            console.log("there is no group founded");
             
-        
-        this.setState({        
-            account: account[0],
-            contract: instance,
-            web3: web3
-        },this.getInfo)
-          
-    }
 
-    getInfo = async () => {
+        } else {
+            this.getGroup();
+    }
+}
+
+    getGroup = async () => {
+        let groupName = this.state.groupName;
         const contract = this.state.contract;
         const account = this.state.account;
-        let groupName = "";
 
-        if (this.state.groupName === undefined) {
-            groupName = "group2"
-        } 
-        console.log(account);
-        
         const group = await contract.methods.getGroup(groupName).call({from: account});
         const debt = await contract.methods.checkMemberDebtStatus(groupName).call({from: account});
-        
         let requestCount = group[4];
 
-        let request = await contract.methods.getRequest("group2",0).call({from: account});
-                
-        /* for (let index = 0; index < requestCount; index++) {
-            
-            let request = await contract.methods.getRequest(groupName,0).call({from: account});
-            console.log(request);
-            
-            this.setState({
-                nameSurname: [...this.state.nameSurname, request[1]],
-                memberAddress: [...this.state.memberAddress, request[2]],
-                isCompleted: [...this.state.isCompleted, request[3]],
-                ApprovalsCount: [...this.state.ApprovalsCount, request[4]],
-                requests: [...this.state.requests, request],
-            })
-        } */
-        
-
         this.setState({
+            requestCount: requestCount,
             groupName: group[0],
             creator: group[1],
             isOpen: group[2],
             numberOfMember: group[3],
             amountLended: debt[1],
             amountBorrowed: debt[0],
-            requestCount: requestCount,
-        })
+            
+        }, this.getInfo)
+    }
+
+    getInfo = async () => {
+        const contract = this.state.contract;
+        const account = this.state.account;
+        let groupName = this.state.groupName;
+        
+        for (let index = 0; index < this.state.requestCount; index++) {
+            
+            let request = await contract.methods.getRequest(groupName,index).call({from: account});
+            
+            this.setState({
+                nameSurname: [...this.state.nameSurname, request[0]],
+                memberAddress: [...this.state.memberAddress, request[1]],
+                isCompleted: [...this.state.isCompleted, request[2]],
+                ApprovalsCount: [...this.state.ApprovalsCount, request[3]],
+                requests: [...this.state.requests, request],
+            })
+        }
         
     }
     
@@ -108,13 +88,28 @@ class GroupProfile extends Component {
         history.push(path);
     }
 
+    handleRequestArray = () => {
+        let requestArray = this.state.requests;
+        console.log("bool: ",requestArray[0][2]);
+        
+        for (let index = 0; index < requestArray.length; index++) {
+            if (requestArray[index][2] === true) {
+                requestArray.splice(index, 1)
+            }
+
+        }
+    }
+
     ConfirmRequest = async (memberAddress, index) => {
         const contract = this.state.contract;
         const account = this.state.account;
         const groupName = this.state.groupName;
 
         await contract.methods.approveRequest(memberAddress, groupName, index).send({from: account})
+        this.getGroup();
         this.getInfo();
+        this.handleRequestArray();
+        this.getCell();
         
     }
 
