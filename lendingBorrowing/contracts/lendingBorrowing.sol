@@ -141,11 +141,12 @@ contract lendingBorrowing {
         request.approvalCount++;
         
         // if 80% of members approve that candidate can enroll, then add candidate to group
-        if (groups[_groupId].numberOfMember == request.approvalCount) {
+        if  ((groups[_groupId].numberOfMember * 80) / 100 < request.approvalCount) {
             addCandidateToGroup(_candidateAddress, _groupId);
             request.complete = true;
             requestsArray[_groupId][_id].complete = true;
             groups[_groupId].requestCount -= 1;
+            delete requestsArray[_groupId][_id];
         }
         
         emit LogApprovedRequest(msg.sender, request.approvalCount);

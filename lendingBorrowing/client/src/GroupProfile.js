@@ -21,13 +21,15 @@ class GroupProfile extends Component {
         account: this.props.location.account,
 
         //Request
-        nameSurname: [],
-        memberAddress: [],
-        isCompleted: [],
-        ApprovalsCount: [],
         requestCount: 0,
         requests: []
 
+    }
+
+    routeChange = ()=> {
+        let path = `./`;
+        let history = useHistory();
+        history.push(path);
     }
 
     componentDidMount = async () => {
@@ -38,8 +40,26 @@ class GroupProfile extends Component {
 
         } else {
             this.getGroup();
+        }
     }
-}
+
+    getRequests = async (requestCount) => {
+        let groupName = this.state.groupName;
+        const contract = this.state.contract;
+        const account = this.state.account;
+        console.log(requestCount);
+        
+        for (let index = 0; index < requestCount; index++) {
+            
+            let request = await contract.methods.getRequest(groupName,index).call({from: account});
+
+            if (request[2] === false) {
+                this.setState({
+                    requests: [...this.state.requests, request],
+                },)
+            }   
+        }
+    }
 
     getGroup = async () => {
         let groupName = this.state.groupName;
@@ -48,10 +68,9 @@ class GroupProfile extends Component {
 
         const group = await contract.methods.getGroup(groupName).call({from: account});
         const debt = await contract.methods.checkMemberDebtStatus(groupName).call({from: account});
-        let requestCount = group[4];
-
+        
         this.setState({
-            requestCount: requestCount,
+            requestCount: group[4],
             groupName: group[0],
             creator: group[1],
             isOpen: group[2],
@@ -59,45 +78,7 @@ class GroupProfile extends Component {
             amountLended: debt[1],
             amountBorrowed: debt[0],
             
-        }, this.getInfo)
-    }
-
-    getInfo = async () => {
-        const contract = this.state.contract;
-        const account = this.state.account;
-        let groupName = this.state.groupName;
-        
-        for (let index = 0; index < this.state.requestCount; index++) {
-            
-            let request = await contract.methods.getRequest(groupName,index).call({from: account});
-            
-            this.setState({
-                nameSurname: [...this.state.nameSurname, request[0]],
-                memberAddress: [...this.state.memberAddress, request[1]],
-                isCompleted: [...this.state.isCompleted, request[2]],
-                ApprovalsCount: [...this.state.ApprovalsCount, request[3]],
-                requests: [...this.state.requests, request],
-            })
-        }
-        
-    }
-    
-    routeChange = ()=> {
-        let path = `./`;
-        let history = useHistory();
-        history.push(path);
-    }
-
-    handleRequestArray = () => {
-        let requestArray = this.state.requests;
-        console.log("bool: ",requestArray[0][2]);
-        
-        for (let index = 0; index < requestArray.length; index++) {
-            if (requestArray[index][2] === true) {
-                requestArray.splice(index, 1)
-            }
-
-        }
+        }, () =>  this.getRequests(group[4]))
     }
 
     ConfirmRequest = async (memberAddress, index) => {
@@ -106,11 +87,14 @@ class GroupProfile extends Component {
         const groupName = this.state.groupName;
 
         await contract.methods.approveRequest(memberAddress, groupName, index).send({from: account})
-        this.getGroup();
-        this.getInfo();
-        this.handleRequestArray();
-        this.getCell();
+        let newRequests = this.state.requests;
+        newRequests.splice(index, 1)
+
+        this.setState({
+            requests: newRequests
+        })
         
+        this.getGroup();
     }
 
     getCell = () => {
@@ -118,22 +102,22 @@ class GroupProfile extends Component {
                 <Table.Row key={index}>
                     <Table.Cell singleLine>
                     <Header as='h4' textAlign='center'>
-                        {this.state.nameSurname[index]}
+                        {request[0]}
                     </Header>
                     </Table.Cell>
-                    <Table.Cell singleLine>{this.state.memberAddress[index]}</Table.Cell>
+                    <Table.Cell singleLine>{request[1]}</Table.Cell>
                     <Table.Cell>
-                    {String(this.state.isCompleted[index])}
+                    {String(request[2])}
                     </Table.Cell>
                     <Table.Cell textAlign='right' singleLine>
                     {/* 80% <br /> */}
-                    {this.state.ApprovalsCount[index]} Approval
+                    {request[3]} Approval
                     </Table.Cell>
                     <Table.Cell textAlign="center">
                     <Button.Group>
-                        <Button onClick={() => this.rejectRequest(this.state.memberAddress[index], index)} negative>Reject</Button>
+                        <Button onClick={() => this.rejectRequest(request[1], index)} negative>Reject</Button>
                         <Button.Or />
-                        <Button onClick={() => this.ConfirmRequest(this.state.memberAddress[index], index)} positive>Confirm</Button>
+                        <Button onClick={() => this.ConfirmRequest(request[1], index)} positive>Confirm</Button>
                     </Button.Group>
                     </Table.Cell>
                 </Table.Row>
