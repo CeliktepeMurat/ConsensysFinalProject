@@ -15,7 +15,8 @@ You can download this all repository from this github page and run on your on lo
 npm install nodejs
 npm install truffle
 ```
-Metamask -> Search metamask chrome extension on google and install, then create a wallet
+For installing metamask, search 'metamask chrome extension' on google and install, then create a wallet
+
 > For windows users, please download a linux virtual machine and run on it
 
 ### Clone
