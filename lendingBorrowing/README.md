@@ -57,12 +57,17 @@ Now, you are ready to interact with contract via ui
 
 ### Creating a Group
 
-Group is a kind of private concepts in this project. Everybody can create a group and invite their friend. 
+> ***Group is a kind of private concepts in this project. Everybody can create a group and invite their friend.*** 
 - In order to create a group, click the 'Create Group' button and go to Group creation page
 - Group name and your name-surname is enough to creation
 - If you click the 'create' button, a metamask pop up will come up and it will ask to confirm transaction
 - When you confirm, group will be successfully created
 
+### Interact with group 
+- Type your group name to search bar and it will come up with some detail
+- Click the 'view more details' button to go group profile page
+- Here is where will we make all things releated to group
 
-
+### Group Profile Page
+- 
 
