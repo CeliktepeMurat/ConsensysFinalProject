@@ -10,7 +10,7 @@ You can download this all repository from this github page and run on your on lo
 - Metamask
 
 ### Install
-'''
+```
 npm install nodejs
 npm install truffle
-'''
+```
