@@ -37,7 +37,8 @@ cd client
 npm install
 npm run start
 ```
-Before using platform, metamask should be adjusted. In order to do that 
+Before using platform, metamask should be adjusted. 
+#### Metamask Installation
 - Click metamask icon on the browser(Chrome recommended)
 - In order to connect our local truffle network, click the networks dropdown list (on the top right)
 - Then click the localhost 8545
