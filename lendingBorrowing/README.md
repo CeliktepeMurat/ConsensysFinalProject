@@ -38,7 +38,7 @@ npm install
 npm run start
 ```
 Before using platform, metamask should be adjusted. 
-#### Metamask Installation
+#### Metamask Installation and Setting Up
 - Click metamask icon on the browser(Chrome recommended)
 - In order to connect our local truffle network, click the networks dropdown list (on the top right)
 - Then click the localhost 8545
@@ -51,6 +51,17 @@ Before using platform, metamask should be adjusted.
 - After that paste your copied private key there and this account will be added to metamask
 - For testing purposes, you need to add at least two account from turffle via following steps above
 
+
+Now, you are ready to interact with contract via ui
+
+
+### Creating a Group
+
+Group is a kind of private concepts in this project. Everybody can create a group and invite their friend. 
+- In order to create a group, click the 'Create Group' button and go to Group creation page
+- Group name and your name-surname is enough to creation
+- If you click the 'create' button, a metamask pop up will come up and it will ask to confirm transaction
+- When you confirm, group will be successfully created
 
 
 
