@@ -1,1 +1,1 @@
-Lending and Borrowing Platform
+<b>Lending and Borrowing Platform</b>
