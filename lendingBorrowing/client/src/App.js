@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import "./css/App.css";
 import lendingBorrowing from "./contracts/lendingBorrowing.json";
 import getWeb3 from "./getWeb3";
-import { Container, Menu, Input, Button, Card, Form,} from 'semantic-ui-react'
+import { Container, Menu, Input, Button, Card, Form, Message} from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 import { Link } from 'react-router-dom'
 import { useHistory} from 'react-router-dom'
@@ -38,31 +38,40 @@ class App extends Component {
     account: this.props.location.account,
 
     // User
-    nameSurname: ""
+    nameSurname: "",
+
+    isSentRequest: false,
 
 }
   
   componentDidMount = async () => {
     try {
-      // Get network provider and web3 instance.
-      const web3 = await getWeb3();
 
-      // Use web3 to get the user's accounts.
-      const account = await web3.eth.getAccounts();
-      
-      
+      let contract = this.props.location.contract;
+      let account = this.props.location.account;
+      let web3 = this.props.location.web3;
 
-      // Get the contract instance.
-      const networkId = await web3.eth.net.getId();
-      const deployedNetwork = lendingBorrowing.networks[networkId];
-      const instance = new web3.eth.Contract(
-        lendingBorrowing.abi,
-        deployedNetwork && deployedNetwork.address,
-      );
+      if (contract === undefined && web3 === undefined && account === undefined) {
+        // Get network provider and web3 instance.
+        web3 = await getWeb3();
 
-      // Set web3, accounts, and contract to the state, and then proceed with an
-      // example of interacting with the contract's methods.
-      this.setState({ web3, account: account[0], contract: instance,});
+        // Use web3 to get the user's accounts.
+        account = await web3.eth.getAccounts();
+        
+        
+
+        // Get the contract instance.
+        const networkId = await web3.eth.net.getId();
+        const deployedNetwork = lendingBorrowing.networks[networkId];
+        contract = new web3.eth.Contract(
+          lendingBorrowing.abi,
+          deployedNetwork && deployedNetwork.address,
+        );
+        this.setState({ web3, account: account[0], contract: contract});
+      } else {
+
+        this.setState({ web3: web3, account: account, contract: contract,});
+      }
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -85,7 +94,9 @@ class App extends Component {
     }
 
     await contract.methods.enroll(groupName, nameSurname).send({from: account})
-    
+    this.setState({
+      isSentRequest: true
+    })
 
   }
 
@@ -113,6 +124,7 @@ class App extends Component {
     const isEnrolled = await contract.methods.checkParticipant(groupName).call({
       from: account
     });
+
     this.setState({
       isEnrolled: isEnrolled
     })
@@ -185,7 +197,7 @@ class App extends Component {
 
     const isEnrolled = this.state.isEnrolled;
     
-    if (!isEnrolled && this.state.isOpen === true) {
+    if (!isEnrolled && this.state.isOpen === true && this.state.isSentRequest === false) {
       button1 = 
               <Form style={{marginTop: "4em"}}>
                 <Form.Group>
@@ -224,6 +236,15 @@ class App extends Component {
                   description="No group founded"
                 />
               </Card>
+      
+    }
+    else if(this.state.isSentRequest) {
+      button1 = <Form success>
+                  <Message
+                    success
+                    header='Request is on pending.'
+                  />
+                </Form>
       
     }
     return (

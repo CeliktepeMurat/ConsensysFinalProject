@@ -138,15 +138,17 @@ contract lendingBorrowing {
         require(!request.approvals[_candidateAddress]);
         
         request.approvals[msg.sender] == true;
-        request.approvalCount++;
+        request.approvalCount += 1;
+        requestsArray[_groupId][_id].approvalCount += 1;
         
         // if 80% of members approve that candidate can enroll, then add candidate to group
         if  ((groups[_groupId].numberOfMember * 80) / 100 < request.approvalCount) {
             addCandidateToGroup(_candidateAddress, _groupId);
+            request.approvalCount += 1;
             request.complete = true;
             requestsArray[_groupId][_id].complete = true;
             groups[_groupId].requestCount -= 1;
-            delete requestsArray[_groupId][_id];
+            participants[_candidateAddress].enrolledGroup[_groupId] = true;
         }
         
         emit LogApprovedRequest(msg.sender, request.approvalCount);
@@ -319,6 +321,13 @@ contract lendingBorrowing {
     view 
     returns(string memory, address, bool, uint) {
         return (requestsArray[_groupId][_id].nameSurname, requestsArray[_groupId][_id].candidate, requestsArray[_groupId][_id].complete, requestsArray[_groupId][_id].approvalCount);
+    }
+    
+    function getRequestArrayLength(string memory _groupId) 
+    public 
+    view 
+    returns(uint) {
+        return (requestsArray[_groupId].length);
     }
     
 }

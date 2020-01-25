@@ -45,26 +45,38 @@ class GroupProfile extends Component {
             
 
         } else {
+            this.setState({
+                requests: []
+            })
             this.getGroup();
+            this.getRequests();
+            
         }
     }
 
-    getRequests = async (requestCount) => {
+    getRequests = async () => {
         let groupName = this.state.groupName;
         const contract = this.state.contract;
         const account = this.state.account;
-        console.log(requestCount);
         
-        for (let index = 0; index < requestCount; index++) {
+        
+        const getrequestsArrayLength = await contract.methods.getRequestArrayLength(groupName).call({from: account});
+        let requestsArrayLength = getrequestsArrayLength;
+        console.log(requestsArrayLength);
+
+        let newRequests = [];
+        
+        for (let index = 0; index < requestsArrayLength; index++) {
             
             let request = await contract.methods.getRequest(groupName,index).call({from: account});
 
-            if (request[2] === false) {
-                this.setState({
-                    requests: [...this.state.requests, request],
-                },)
+            if (request[2] === false && request[0] !== "") {
+                newRequests.push(request);
             }   
         }
+        this.setState({
+            requests: newRequests
+        })
     }
 
     getGroup = async () => {
@@ -84,7 +96,7 @@ class GroupProfile extends Component {
             amountLended: debt[1],
             amountBorrowed: debt[0],
             
-        }, () =>  this.getRequests(group[4]))
+        })
     }
 
     ConfirmRequest = async (memberAddress, index) => {
@@ -94,18 +106,17 @@ class GroupProfile extends Component {
 
         await contract.methods.approveRequest(memberAddress, groupName, index).send({from: account})
         let newRequests = this.state.requests;
-        newRequests.splice(index, 1)
+        newRequests.splice(index, 1) 
 
+        this.getGroup();
         this.setState({
             requests: newRequests
         })
-        
-        this.getGroup();
     }
 
     getCell = () => {
             return (this.state.requests.map((request, index) => (
-                <Table.Row key={index}>
+                <Table.Row className="tableRowRequests" key={index}>
                     <Table.Cell singleLine>
                     <Header as='h4' textAlign='center'>
                         {request[0]}
@@ -248,7 +259,7 @@ class GroupProfile extends Component {
                     </Card.Group>
                 </div> 
       } else if (activeItem === "requests") {
-        content = <div>
+        content = <div className="requestTable">
                  <h3 style={{paddingTop: 40, paddingBottom: 20}}>Enrolling Requests</h3>
                     <Table celled padded>
                         <Table.Header>
@@ -362,7 +373,7 @@ class GroupProfile extends Component {
                       pathname:"./",
                       contract: this.state.contract,
                       web3: this.state.web3,
-                      accounts: this.state.accounts
+                      account: this.state.account
                       
                     }} className="BackGroupButton">Back Group Page</Link>
                 </Menu.Item>
@@ -404,7 +415,7 @@ class GroupProfile extends Component {
                 </Menu>
                 </Grid.Column>
 
-                <Grid.Column stretched width={12}>
+                <Grid.Column stretched width={13}>
                 <Segment>
                    {content}
                 </Segment>
