@@ -176,7 +176,7 @@ contract lendingBorrowing {
     {
         require(msg.value >= 0, "Please send a valid amount");
         
-        groups[_groupId].lenders[msg.sender] = msg.value;
+        groups[_groupId].lenders[msg.sender] += msg.value;
         groups[_groupId].groupBalance += msg.value;
         
         emit LogLendingTransaction(msg.sender, msg.value, groups[_groupId].groupBalance);
@@ -217,11 +217,12 @@ contract lendingBorrowing {
         
         // check member has debt
         require(debt != 0, "you do not have debt");
-        require(debt <= msg.value);
         
         if (msg.value <= debt) {
             // for example:  debt = 100,  amount = 50
             groups[_groupId].groupBalance += msg.value;
+            groups[_groupId].borrowers[msg.sender] -= msg.value;
+
             debt -= msg.value;
             
             emit LogPayDebtedBack(msg.sender, msg.value, debt, groups[_groupId].groupBalance);
@@ -232,6 +233,7 @@ contract lendingBorrowing {
             // for example:  debt = 100,  amount = 150
         
             groups[_groupId].groupBalance += msg.value;
+            groups[_groupId].borrowers[msg.sender] = 0;
             
             // make debt of this member 0        
             debt = 0;
@@ -253,6 +255,10 @@ contract lendingBorrowing {
     checkGroupOpen(_groupId)
     returns(uint)
     {
+        uint debt = groups[_groupId].borrowers[msg.sender];
+        // check member has debt
+        require(debt != 0, "you do not have debt");
+
         uint lendedAmount = groups[_groupId].lenders[msg.sender];
         require(lendedAmount != 0, "You do not have lended money");
         require(groups[_groupId].groupBalance >= msg.value, "There is no enough balance");
