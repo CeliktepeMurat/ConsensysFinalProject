@@ -4,7 +4,7 @@
 This a lending and borrowing platform which people can lend or borrow money from their friends, family or even co-workers with no collateral. 
 There are few project around this concept which are compound, MakerDAO etc. But they are public and based on none-collateralization.
 
-This can be a bit painfull for people who has little budget (students, young people etc.) and unfamiliar with blockchain world. There should be a system that a person may lend money and borrow whenever he or she needs. When a person lends money, getting interest rate will be another motivation. 
+This can be a bit painfull for people who has little budget (students, young people etc.) and unfamiliar with blockchain world. There should be a system that a person may lend money and borrow whenever needed. When a person lends money, getting interest rate will be another motivation. 
 
 If there would be user-friendly platform and system that people would lend their money to their friends through contract, that would be attractive for them
 
