@@ -106,3 +106,19 @@ In this page, there are 5 functionalities which you can do;
 4. Pay debt back
 5. withdraw
 
+
+## Testing
+In order to run tests, these steps need to followed;
+
+1. Open two terminal, in the first one write the
+```
+ganache-cli -l 7000000
+```
+> ***Before run tests, please check that your server is started on which port. According to this port, go to truffle.js and change the port number.***
+
+2. In the second terminal, go to "lendingBorrowing/" directory and just type,
+```
+truffle test
+```
+
+
