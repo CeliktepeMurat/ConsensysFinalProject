@@ -1,12 +1,32 @@
 # Lending and Borrowing Platform
-This a lending and borrowing platform which run on ethereum network
 
-## Getting Started
+## INTRODUCTION
+This a lending and borrowing platform which people can lend or borrow money from their friends, family or even co-workers with no collateral. 
+There are few project around this concept which are compound, MakerDAO etc. But they are public and based on none-collateralization.
+
+This can be a bit painfull for people who has little budget (students, young people etc.) and unfamiliar with blockchain world. There should be a system that a person may lend money and borrow whenever he or she needs. When a person lends money, getting interest rate will be another motivation. 
+
+If there would be user-friendly platform and system that people would lend their money to their friends through contract, that would be attractive for them
+
+## High-Level Solution
+My project comes with private groups and non-collateralization system. In the system, anyone may be able to create a group and invite anyone. Groups will be private and enrolling will be a request-vote based system. The reason of this, if member of groups confirm a person to enroll group, they trust him or her. This trust is collateralization of the group.
+
+If 80% of group member confirm a person to enroll, this person will be added to group. A person should send minimum amount that identified while group creation from creator. 
+
+Each group has own balance and this balance will be invested compound. Interes income that earned from compound, will be allocated between group member according to their lending rate. 
+
+
+> 
+
+## INSTALLATION
+
+### Getting Started
 You can download this all repository from this github page and run on your on local machine. 
 
 ### Requirements
 - NodeJs
 - Truffle
+- Ganache-cli
 - git
 - Metamask
 
@@ -14,6 +34,7 @@ You can download this all repository from this github page and run on your on lo
 ```
 npm install nodejs
 npm install truffle
+npm install ganache-cli -g
 ```
 For installing metamask, search 'metamask chrome extension' on google and install, then create a wallet
 
