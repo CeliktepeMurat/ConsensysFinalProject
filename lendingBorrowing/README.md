@@ -56,9 +56,13 @@ Before using platform, metamask should be adjusted.
 Now, you are ready to interact with contract via ui
 
 
+> ### **Important Note: Each time you change your metamask account, you have to refresh the page!**
+
+
 ### Creating a Group
 
 > ***Group is a kind of private concepts in this project. Everybody can create a group and invite their friend.*** 
+
 - In order to create a group, click the 'Create Group' button and go to Group creation page
 - Group name and your name-surname is enough to creation
 - If you click the 'create' button, a metamask pop up will come up and it will ask to confirm transaction
@@ -70,5 +74,10 @@ Now, you are ready to interact with contract via ui
 - Here is where will we make all things releated to group
 
 ### Group Profile Page
-- 
+In this page, there are 5 functionalities which you can do;
+1. Confirm or reject requests
+2. Lending
+3. Borrowing
+4. Pay debt back
+5. withdraw
 
