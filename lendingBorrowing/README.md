@@ -13,10 +13,13 @@ My project comes with private groups and non-collateralization system. In the sy
 
 If 80% of group member confirm a person to enroll, this person will be added to group. A person should send minimum amount that identified while group creation from creator. 
 
-Each group has own balance and this balance will be invested compound. Interes income that earned from compound, will be allocated between group member according to their lending rate. 
+Two type of lending will be considered. One of them is will invest to compound, another is will stay inside the contract to borrowed. When someone wants to lend amount, he/she will split amount. The proportion wil be specified from creator at begining. For example, let say that the proportion of amount to invest is 70%. When someone wants to lend money, the 70% of money will invest to compound and 30% of money will stay inside the contract. 
 
 
-> 
+Each group has own balance and this balance will be invested compound. Interest income that earned from compound, will be allocated between group member according to their lending rate. 
+
+
+
 
 ## INSTALLATION
 
