@@ -75,9 +75,9 @@ Now, you are ready to interact with contract via ui
 
 ### Group Profile Page
 In this page, there are 5 functionalities which you can do;
-1- Confirm or reject requests
-2- Lending
-3- Borrowing
-4- Pay debt back
-5- withdraw
+1. Confirm or reject requests
+2. Lending
+3. Borrowing
+4. Pay debt back
+5. withdraw
 
