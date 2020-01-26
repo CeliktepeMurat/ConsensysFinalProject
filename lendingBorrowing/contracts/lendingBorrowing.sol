@@ -194,7 +194,7 @@ contract lendingBorrowing {
     {
         // check is there enough amount
         require(groups[_groupId].groupBalance >= msg.value, "There is no enough balance");
-        
+
         // firstly, substrack group balance  
         groups[_groupId].groupBalance -= msg.value;
         
@@ -203,6 +203,7 @@ contract lendingBorrowing {
         
         // add the member to borrowers
         groups[_groupId].borrowers[msg.sender] += msg.value;
+        groups[_groupId].lenders[msg.sender] -= msg.value;
         
         emit LogBorrowingTransaction(msg.sender, msg.value, groups[_groupId].groupBalance);
         
@@ -259,13 +260,15 @@ contract lendingBorrowing {
     {
         uint debt = groups[_groupId].borrowers[msg.sender];
         // check member has debt
-        require(debt != 0, "you do not have debt");
+        require(debt == 0, "you have debt");
 
         uint lendedAmount = groups[_groupId].lenders[msg.sender];
         require(lendedAmount != 0, "You do not have lended money");
         require(groups[_groupId].groupBalance >= msg.value, "There is no enough balance");
         
-        lendedAmount -= msg.value;
+        groups[_groupId].lenders[msg.sender] -= msg.value;
+        groups[_groupId].groupBalance -= msg.value;
+        
         msg.sender.transfer(msg.value);
         
         emit LogWithdraw(msg.sender, msg.value, groups[_groupId].groupBalance);

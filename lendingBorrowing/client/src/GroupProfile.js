@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./css/App.css";
-import { Container, Menu, Card, Header, Table, Button, Grid, Segment, Form, Label} from 'semantic-ui-react'
+import { Container, Menu, Card, Header, Table, Button, Grid, Segment, Form, Label, Message} from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 import { Link } from 'react-router-dom'
 import { useHistory} from 'react-router-dom'
@@ -29,6 +29,12 @@ class GroupProfile extends Component {
         amountToBorrow: "",
         amountToWithdraw: "",
         amountToPayBack: "",
+
+        returnMessageLending: "Amount successfully lended. Check group details.",
+        returnMessageBorrowing: "Amount successfully borrowed. Check group details.",
+        returnMessagepaydebtbak: "Amount successfully payed back. Check group details.",
+        returnMessagewithdraw: "Amount successfully withdrawed. Check group details.",
+        selectedReturnMessage: "",
 
     }
 
@@ -141,6 +147,15 @@ class GroupProfile extends Component {
             )))
     }
 
+    message = (returnMessage) => {
+        return <Form success>
+                    <Message
+                    success
+                    header={returnMessage}
+                    />
+                </Form>
+    }
+
     lend = async () => {
         const amount = this.state.amountToLend;
         const groupName = this.state.groupName;
@@ -152,6 +167,10 @@ class GroupProfile extends Component {
             from: account,
             value: amount
         })
+        this.setState({
+            selectedReturnMessage: this.state.returnMessageLending
+        })
+        
         this.getGroup();
     }
 
@@ -166,7 +185,9 @@ class GroupProfile extends Component {
             from: account,
             value: amount
         })
-        
+        this.setState({
+            selectedReturnMessage: this.state.returnMessageBorrowing
+        })
         this.getGroup();
     }
 
@@ -181,6 +202,10 @@ class GroupProfile extends Component {
         await contract.methods.withdraw(groupName).send({
             from: account,
             value: amount
+        })
+
+        this.setState({
+            selectedReturnMessage: this.state.returnMessagewithdraw
         })
         
         this.getGroup();
@@ -197,8 +222,10 @@ class GroupProfile extends Component {
             from: account,
             value: amount
         })
-        const balance = await contract.methods.checkGroupBalance(groupName).call();
-        console.log(balance);
+        
+        this.setState({
+            selectedReturnMessage: this.state.returnMessagepaydebtbak
+        })
         
         this.getGroup();
     }
@@ -297,6 +324,12 @@ class GroupProfile extends Component {
                         <Form.Field>
                             <Button onClick={() => this.lend()} size="large" positive>Lend </Button>
                         </Form.Field>
+                        <Form.Field>
+                            <Message
+                                style={{width: "34.4em"}}
+                                content={this.state.selectedReturnMessage}
+                            />        
+                        </Form.Field>
                         </Form>
       }
 
@@ -318,6 +351,12 @@ class GroupProfile extends Component {
                       <Form.Field>
                           <Button onClick={() => this.borrow()} size="large" positive>Borrow </Button>
                       </Form.Field>
+                      <Form.Field>
+                      <Message
+                                style={{width: "34.4em"}}
+                                content={this.state.selectedReturnMessage}
+                            />       
+                        </Form.Field>
                       </Form>
     }
     else if (activeItem === "payDebtBack") {
@@ -338,6 +377,12 @@ class GroupProfile extends Component {
                       <Form.Field>
                           <Button onClick={() => this.payDebtBack()} size="large" positive>Pay Back </Button>
                       </Form.Field>
+                      <Form.Field>
+                            <Message
+                                style={{width: "34.4em"}}
+                                content={this.state.selectedReturnMessage}
+                            />        
+                        </Form.Field>
                       </Form>
     }
     else if (activeItem === "withdraw") {
@@ -358,6 +403,13 @@ class GroupProfile extends Component {
                       <Form.Field>
                           <Button onClick={() => this.withdraw()} size="large" positive>Withdraw </Button>
                       </Form.Field>
+                      <Form.Field>
+                      <Message
+                                style={{width: "34.4em"}}
+                                content={this.state.selectedReturnMessage}
+                            />      
+                        </Form.Field>
+                      
                       </Form>
     }
     

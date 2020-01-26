@@ -5,10 +5,11 @@ module.exports = {
   // to customize your Truffle configuration!
   contracts_build_directory: path.join(__dirname, "client/src/contracts"),
   networks: {
-    develop: {
+    development: {
+      host: "localhost",
       port: 8545,
-      gas: 60000000,
-      gasPrice: 0
+      gas: 7000000,
+      network_id: "*" // Match any network id
     },
     solc: {
       optimizer: {
