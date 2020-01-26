@@ -55,7 +55,8 @@ Before using platform, metamask should be adjusted.
 
 Now, you are ready to interact with contract via ui
 
-> **Important Note: Each time you change your metamask account, you have to refresh the page!**
+
+> *Important Note: Each time you change your metamask account, you have to refresh the page!*
 
 
 ### Creating a Group
