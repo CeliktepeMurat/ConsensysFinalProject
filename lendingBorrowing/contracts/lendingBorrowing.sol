@@ -203,7 +203,6 @@ contract lendingBorrowing {
         
         // add the member to borrowers
         groups[_groupId].borrowers[msg.sender] += msg.value;
-        groups[_groupId].lenders[msg.sender] -= msg.value;
         
         emit LogBorrowingTransaction(msg.sender, msg.value, groups[_groupId].groupBalance);
         

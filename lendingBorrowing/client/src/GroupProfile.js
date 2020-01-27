@@ -143,6 +143,8 @@ class GroupProfile extends Component {
                         <Button onClick={() => this.ConfirmRequest(request[1], index)} positive>Confirm</Button>
                     </Button.Group>
                     </Table.Cell>
+                    {console.log(request[3])
+                    }
                 </Table.Row>
             )))
     }
@@ -412,7 +414,6 @@ class GroupProfile extends Component {
                       
                       </Form>
     }
-    
     return (
         <Container className="App">
           <div>
