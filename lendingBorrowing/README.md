@@ -1,12 +1,41 @@
 # Lending and Borrowing Platform
-This a lending and borrowing platform which run on ethereum network
 
-## Getting Started
+## INTRODUCTION
+This a lending and borrowing platform which people can lend or borrow money from their friends, family or even co-workers with no collateral. 
+There are few project around this concept which are compound, MakerDAO etc. But they are public and based on none-collateralization.
+
+This can be a bit painfull for people who has little budget (students, young people etc.) and unfamiliar with blockchain world. There should be a system that a person may lend money and borrow whenever needed. When a person lends money, getting interest rate will be another motivation. 
+
+If there would be user-friendly platform and system that people would lend their money to their friends through contract, that would be attractive for them
+
+## High-Level Solution
+My project comes with private groups and non-collateralization system. In the system, anyone may be able to create a group and invite anyone. Groups will be private and enrolling will be a request-vote based system. The reason of this, if member of groups confirm a person to enroll group, they trust him or her. This trust is collateralization of the group.
+
+If 80% of group member confirm a person to enroll, this person will be added to group. A person should send minimum amount that identified while group creation from creator. 
+
+
+Each group has own balance and this balance will be invested compound. Interest income that earned from compound, will be allocated between group member according to their lending rate. 
+
+Two type of lending will be considered. One of them is will invest to compound, another is will stay inside the contract to borrowed. When someone wants to lend amount, he/she will split amount. The proportion wil be specified from creator at beginning. For example, let say that the proportion of amount to invest is 70%. When someone wants to lend money, the 70% of money will invest to compound and 30% of money will stay inside the contract. 
+Everybody will be able to borrow money according to their lending amount. The proportions may be identified differently.
+
+
+## IMPROVEMENTS
+- A better user interface
+- A better moduler contract design
+- Import a stable coin into the contract instead of ether (like DAI, Tether etc.)
+
+
+
+## INSTALLATION
+
+### Getting Started
 You can download this all repository from this github page and run on your on local machine. 
 
 ### Requirements
 - NodeJs
 - Truffle
+- Ganache-cli
 - git
 - Metamask
 
@@ -14,6 +43,7 @@ You can download this all repository from this github page and run on your on lo
 ```
 npm install nodejs
 npm install truffle
+npm install ganache-cli -g
 ```
 For installing metamask, search 'metamask chrome extension' on google and install, then create a wallet
 
@@ -80,4 +110,20 @@ In this page, there are 5 functionalities which you can do;
 3. Borrowing
 4. Pay debt back
 5. withdraw
+
+
+## Testing
+In order to run tests, these steps need to followed;
+
+1. Open two terminal, in the first one write the
+```
+ganache-cli -l 7000000
+```
+> ***Before run tests, please check that your server is started on which port. According to this port, go to truffle.js and change the port number.***
+
+2. In the second terminal, go to "lendingBorrowing/" directory and just type,
+```
+truffle test
+```
+
 
