@@ -20,6 +20,11 @@ Two type of lending will be considered. One of them is will invest to compound, 
 Everybody will be able to borrow money according to their lending amount. The proportions may be identified differently.
 
 
+## IMPROVEMENTS
+- A better user interface
+- A better moduler contract design
+- Import a stable coin into the contract instead of ether (like DAI, Tether etc.)
+
 
 
 ## INSTALLATION
