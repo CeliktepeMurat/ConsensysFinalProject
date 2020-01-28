@@ -29,7 +29,7 @@ This modifier is used in all group's function to be sure that there is no any mi
 modifier ensures that just member of group can use group's function.
 
 
-# Fail early and fail loud
+## Fail early and fail loud
 
 Require statements are so important for a function. These are provide us controlling on a function to behave as we expected. Also, when a bug or condition is not provided, it stops the function. 
 
@@ -45,7 +45,7 @@ require(msg.value >= 0, "Please send a valid amount");
 ```
 This code statement ensures that anyone cannot send amount below 0 to contract
 
-# Future Design Patterns
+## Future Design Patterns
 
 ***Withdrawal desing pattern*** can be implemented when contract acts like that. If anyone wants to borrow some money, this would be
 a request and everybody vote this request. If voting is completed there would be a function called sendMoney or withdraw, in this function payment process would become.
