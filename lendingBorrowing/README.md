@@ -16,7 +16,7 @@ If 80% of group member confirm a person to enroll, this person will be added to 
 
 Each group has own balance and this balance will be invested compound. Interest income that earned from compound, will be allocated between group member according to their lending rate. 
 
-Two type of lending will be considered. One of them is will invest to compound, another is will stay inside the contract to borrowed. When someone wants to lend amount, he/she will split amount. The proportion wil be specified from creator at beginning. For example, let say that the proportion of amount to invest is 70%. When someone wants to lend money, the 70% of money will invest to compound and 30% of money will stay inside the contract. 
+Two type of lending will be considered. One of them is will invest to compound, another is will stay inside the contract to be borrowed. When someone wants to lend amount, the amount of this person will split. The proportion wil be specified from creator at beginning. For example, let say that the proportion of amount to invest is 70%. When someone wants to lend money, the 70% of money will invest to compound and 30% of money will stay inside the contract. 
 Everybody will be able to borrow money according to their lending amount. The proportions may be identified differently.
 
 
@@ -24,6 +24,7 @@ Everybody will be able to borrow money according to their lending amount. The pr
 - A better user interface
 - A better moduler contract design
 - Import a stable coin into the contract instead of ether (like DAI, Tether etc.)
+- Gamification would make this contract super excited. For example, if a debt is payed back early, borrowing limit would be higher.
 
 
 
