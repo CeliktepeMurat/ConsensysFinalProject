@@ -1,4 +1,4 @@
-### Deployed TestNet is Rinkeby
+### Deployed Testnet is Rinkeby
 
 Transaction Hash: 0x1af29e257097e5057fdc088667451cf66095d3120a9dd9228d3ea1e810b664fa
 
