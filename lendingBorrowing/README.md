@@ -124,7 +124,7 @@ In order to run tests, these steps need to followed;
 ```
 ganache-cli -l 7000000
 ```
-> ***Before run tests, please check that your server is started on which port. According to this port, go to truffle.js and change the port number.***
+> ***Before run tests, please check that your server is started on which port. According to this port, go to truffle-config.js and change the port number.***
 
 2. In the second terminal, go to "lendingBorrowing/" directory and just type,
 ```
