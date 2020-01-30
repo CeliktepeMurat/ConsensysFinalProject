@@ -19,6 +19,9 @@ Each group has own balance and this balance will be invested compound. Interest 
 Two type of lending will be considered. One of them is will invest to compound, another is will stay inside the contract to be borrowed. When someone wants to lend amount, the amount of this person will split. The proportion wil be specified from creator at beginning. For example, let say that the proportion of amount to invest is 70%. When someone wants to lend money, the 70% of money will invest to compound and 30% of money will stay inside the contract. 
 Everybody will be able to borrow money according to their lending amount. The proportions may be identified differently.
 
+## FUTURE TO-DO
+- The contract does not handle some situations that mentioned above. The first one is, splitting lended money two seperate portion and make task what explained above. Currently only it takes money and deposit it to contract. 
+- Another thing is, contract has not any function to handle interest rate, calculate the interest rate and share according to proportion of lended amounts. This feature did not implemented because, a stable coin will be implemented to this project, so after the stable coin implementation, the function will be added.
 
 ## IMPROVEMENTS
 - A better user interface
