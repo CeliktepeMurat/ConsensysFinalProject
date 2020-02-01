@@ -1,7 +1,7 @@
 ### Deployed Testnet is Rinkeby
 
-Transaction Hash: 0x1af29e257097e5057fdc088667451cf66095d3120a9dd9228d3ea1e810b664fa
+Transaction Hash: 0xfe445ff14dbe0ffc7eaf946bb4d7dcaccd1cedf11bf0ecc8c92c8dc5ee0d6bcf
 
-Contract Address: 0x6575b1058de8af5ab72392257dfa07b6c18dd63e
+Contract Address: 0x47a86f31a963c2ab7874441c8907988991d7fed1
 
-URL: https://rinkeby.etherscan.io/tx/0x1af29e257097e5057fdc088667451cf66095d3120a9dd9228d3ea1e810b664fa
+URL: https://rinkeby.etherscan.io/tx/0xfe445ff14dbe0ffc7eaf946bb4d7dcaccd1cedf11bf0ecc8c92c8dc5ee0d6bcf
