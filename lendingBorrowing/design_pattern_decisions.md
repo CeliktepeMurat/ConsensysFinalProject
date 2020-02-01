@@ -89,11 +89,6 @@ require(msg.value >= 0, "Please send a valid amount");
 ```
 This code statement ensures that anyone cannot send amount below 0 to contract
 
-## Future Design Patterns
-
-***Withdrawal desing pattern*** can be implemented when contract acts like that. If anyone wants to borrow some money, this would be
-a request and everybody vote this request. If voting is completed there would be a function called sendMoney or withdraw, in this function payment process would become.
-In this scenerio, withdrawal design pattern would be implemented and it would work perfectly.
 
 
 
