@@ -29,6 +29,46 @@ This modifier is used in all group's function to be sure that there is no any mi
 modifier ensures that just member of group can use group's function.
 
 
+## Withdrawal Design Pattern
+In this contract, lending process has a desing pattern to handle with some bugs. Lending function is like that;
+```
+function lending(string memory _groupId) 
+    public 
+    payable
+    checkEnrolled(_groupId) 
+    checkGroupOpen(_groupId)
+    {
+        require(msg.value >= 0, "Please send a valid amount");
+        
+        uint amountForGroup = (msg.value * sudoSplitRateForGroup) / 100;
+        uint amountForCompound = (msg.value * sudoSplitRateForCompound) / 100;
+        
+        groups[_groupId].groupBalance += amountForGroup;
+        groups[_groupId].depositGroupArray[msg.sender] += amountForGroup;
+        depositCompoundPending[msg.sender] += amountForCompound;
+        
+        emit LogLendingTransaction(msg.sender, msg.value, groups[_groupId].groupBalance);
+        
+    }
+```
+Here sended amount is splitting two seperate value. Amount to deposit compound is writed to a pending mapping. After that there is another function to deposit;
+
+```
+function depositToCompound(string memory _groupId) 
+    public 
+    payable
+    checkEnrolled(_groupId) 
+    checkGroupOpen(_groupId)
+    {
+        uint amountForCompound = depositCompoundPending[msg.sender];
+        
+        groups[_groupId].depositCompoundArray[msg.sender] += amountForCompound;
+        
+        address(compoundAddress).transfer(amountForCompound);
+        
+    }
+```
+
 ## Fail early and fail loud
 
 Require statements are so important for a function. These are provide us controlling on a function to behave as we expected. Also, when a bug or condition is not provided, it stops the function. 
