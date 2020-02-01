@@ -1,4 +1,4 @@
-# Design Pattern Requirements
+# Design Patterns
 
 ## Circuit Breakers
 
@@ -51,7 +51,7 @@ function lending(string memory _groupId)
         
     }
 ```
-Here sended amount is splitting two seperate value. Amount to deposit compound is writed to a pending mapping. After that there is another function to deposit;
+Here, the amount is splitting two seperate value. Amount to deposit compound is writed to a pending mapping. After that there is another function to deposit;
 
 ```
 function depositToCompound(string memory _groupId) 
