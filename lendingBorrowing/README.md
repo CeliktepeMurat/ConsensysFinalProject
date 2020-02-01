@@ -138,9 +138,42 @@ As security analysis tools, 'MythX' is used. In order to run this analysis test 
 
 In the lendingBorrowing file directory
 ```
+npm install -g truffle-security
+```
+Then open the truffle-config.js file and add this line
+```
+plugins: [ "truffle-security" ]
+```
+Finally truffle-config.js file should look like this;
+```
+const path = require("path");
+
+module.exports = {
+  contracts_build_directory: path.join(__dirname, "client/src/contracts"),
+  plugins: [ "truffle-security" ],
+  networks: {
+    development: {
+      host: "localhost",
+      port: 9545,
+      gas: 7000000,
+      network_id: "*" // Match any network id
+    },
+    solc: {
+      optimizer: {
+          enabled: true,
+          runs: 200
+      }
+  }
+  },
+};
+```
+
+After all this step, ın the lendingBorrowing directory, run the followed command
+```
 truffle run verify
 ```
-run this command line and it will analysis the contract, then return the vulnerabilities if there are.
+
+It will analysis the contract, then return the vulnerabilities if there are.
 
 
 
