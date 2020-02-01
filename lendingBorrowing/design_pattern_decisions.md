@@ -60,6 +60,7 @@ function depositToCompound(string memory _groupId)
     checkEnrolled(_groupId) 
     checkGroupOpen(_groupId)
     {
+        require(depositCompoundPending[msg.sender] != 0, "you do not have amount to deposit");
         uint amountForCompound = depositCompoundPending[msg.sender];
         
         groups[_groupId].depositCompoundArray[msg.sender] += amountForCompound;
@@ -68,6 +69,9 @@ function depositToCompound(string memory _groupId)
         
     }
 ```
+
+This function first look at that is there a amount in pending mapping then read the pending value and deposit it to compound. This way is more secure against to bug or vulnerable transactions. 
+
 
 ## Fail early and fail loud
 
