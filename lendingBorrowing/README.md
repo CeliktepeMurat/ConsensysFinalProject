@@ -22,7 +22,7 @@ Everybody will be able to borrow money according to their lending amount. The pr
 The contract does not handle some situations that mentioned above.
 - The first one is, splitting lended money two seperate portion is hard-coded. Normally, creator of group will decide to these rates.
 
-- Another thing is, contract has not any function to handle interest rate, calculate the interest rate and share according to proportion of lended amounts. This feature did not implemented because, a stable coin will be implemented to this project, so after the stable coin implementation, the function will be added.
+- Another thing is, contract has not any function to handle interest rate, calculate the interest rate and share according to proportion of lended amounts. This feature did not implement because, a stable coin is not exist in this project, so after the stable coin implementation, the function will be added.
 
 ## IMPROVEMENTS
 - A better user interface
