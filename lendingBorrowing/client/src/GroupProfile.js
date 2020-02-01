@@ -25,15 +25,18 @@ class GroupProfile extends Component {
         requests: [],
 
         activeItem: 'details',
-        amountToLend: "",
+        amountToGroup: "",
+        amountToCompound: "",
         amountToBorrow: "",
         amountToWithdraw: "",
         amountToPayBack: "",
+        depositPending: "",
 
         returnMessageLending: "Amount successfully lended. Check group details.",
         returnMessageBorrowing: "Amount successfully borrowed. Check group details.",
         returnMessagepaydebtbak: "Amount successfully payed back. Check group details.",
         returnMessagewithdraw: "Amount successfully withdrawed. Check group details.",
+        returnMessageDeposit: "Amount successfully deposited. Check group details.",
         selectedReturnMessage: "",
 
     }
@@ -90,17 +93,21 @@ class GroupProfile extends Component {
         const contract = this.state.contract;
         const account = this.state.account;
 
-        const group = await contract.methods.getGroup(groupName).call({from: account});
+        const group = await contract.methods.groups(groupName).call({from: account});
         const debt = await contract.methods.checkMemberDebtStatus(groupName).call({from: account});
+        const depositPending = await contract.methods.getDepositPending(account).call();
+
         
         this.setState({
-            requestCount: group[4],
+            requestCount: group[5],
             groupName: group[0],
             creator: group[1],
-            isOpen: group[2],
-            numberOfMember: group[3],
-            amountLended: debt[1],
+            isOpen: group[3],
+            numberOfMember: group[4],
             amountBorrowed: debt[0],
+            amountToGroup: debt[1],
+            amountToCompound: debt[2],
+            depositPending: depositPending,
             
         })
     }
@@ -232,6 +239,24 @@ class GroupProfile extends Component {
         this.getGroup();
     }
     
+    depositToCompound = async () => {
+        const amount = this.state.depositPending;
+        const groupName = this.state.groupName;
+        const contract = this.state.contract;
+        const account = this.state.account;
+        
+
+        await contract.methods.depositToCompound(groupName).send({
+            from: account,
+            value: amount
+        })
+        
+        this.setState({
+            selectedReturnMessage: this.state.returnMessageDeposit
+        })
+        
+        this.getGroup();
+    }
 
     handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 
@@ -243,43 +268,49 @@ class GroupProfile extends Component {
 
       if (activeItem === "details") {
         content = <div className="cardBody">
-                    <Card.Group itemsPerRow={2} centered>
-                    <Card>
+                    <Card.Group itemsPerRow={1} centered>
+                    <Card fluid color="blue">
                         <Card.Content
                         header="Group Name"
                         description={this.state.groupName}
                         />
                     </Card>
 
-                    <Card>
+                    <Card fluid color="blue">
                         <Card.Content
                         header="Creator of Group"
                         description={this.state.creator}
                         />
                     </Card>
 
-                    <Card>
+                    <Card fluid color="blue">
                         <Card.Content
                         header="Status"
                         description={String(this.state.isOpen)}
                         />
                     </Card>
 
-                    <Card>
+                    <Card fluid color="blue">
                         <Card.Content
                         header="Number of Member"
                         description={this.state.numberOfMember}
                         />
                     </Card>
 
-                    <Card>
+                    <Card fluid color="blue">
                         <Card.Content
-                        header="Amount Lended"
-                        description={String(this.state.amountLended)}
+                        header="Amount Lended to Group"
+                        description={String(this.state.amountToGroup)}
                         />
                     </Card>
 
-                    <Card>
+                    <Card fluid color="blue">
+                        <Card.Content
+                        header="Amount deposited to Compound"
+                        description={String(this.state.amountToCompound)}
+                        />
+                    </Card>
+                    <Card fluid color="blue">
                         <Card.Content
                         header="Amount Borrowed"
                         description={String(this.state.amountBorrowed)}
@@ -414,6 +445,30 @@ class GroupProfile extends Component {
                       
                       </Form>
     }
+    else if (activeItem === "depositToCompound") {
+        content = <Form>
+                      <Form.Group>
+                      <Label style={{paddingTop: 10, width: 150}} key="medium" size="medium">
+                          Amount
+                      </Label>
+                          <Form.Input width={6} placeholder={this.state.depositPending} readOnly />
+                      </Form.Group>
+                        <Form.Group>
+                        <Form.Checkbox label='I agree to deposit this amount' />
+                        </Form.Group>
+                      <Form.Group>
+                      
+                      <Button onClick={() => this.depositToCompound()} size="large" positive>Deposit to Compound </Button>
+                      </Form.Group>
+                      <Form.Field>
+                      <Message
+                                style={{width: "34.4em"}}
+                                content={this.state.selectedReturnMessage}
+                            />      
+                        </Form.Field>
+                      
+                      </Form>
+    }
     return (
         <Container className="App">
           <div>
@@ -434,7 +489,7 @@ class GroupProfile extends Component {
 
             <Grid>
                 <Grid.Column width={3}>
-                <Menu fluid vertical tabular>
+                <Menu fluid vertical tabular color="green">
                     <Menu.Item
                     name='details'
                     active={activeItem === 'details'}
@@ -463,6 +518,11 @@ class GroupProfile extends Component {
                     <Menu.Item
                     name='withdraw'
                     active={activeItem === 'withdraw'}
+                    onClick={this.handleItemClick}
+                    />
+                    <Menu.Item
+                    name='depositToCompound'
+                    active={activeItem === 'depositToCompound'}
                     onClick={this.handleItemClick}
                     />
                 </Menu>

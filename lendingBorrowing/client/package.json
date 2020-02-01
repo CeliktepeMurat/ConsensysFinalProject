@@ -9,6 +9,7 @@
     "react-scripts": "^3.3.0",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.88.2",
+    "truffle-security": "^1.7.0",
     "web3": "^1.2.2"
   },
   "scripts": {

@@ -142,7 +142,7 @@ class App extends Component {
         account = this.state.account
       }
 
-      const group = await contract.methods.getGroup(this.state.searchString).call({
+      const group = await contract.methods.groups(this.state.searchString).call({
         from: account
       });
       
@@ -161,8 +161,8 @@ class App extends Component {
         this.setState({
           groupName: group[0],
           creator: group[1],
-          isOpen: group[2],
-          numberOfMember: group[3],
+          isOpen: group[3],
+          numberOfMember: group[4],
           account: account,
         })
       }
