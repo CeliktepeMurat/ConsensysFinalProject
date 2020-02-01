@@ -134,9 +134,13 @@ truffle test
 ## Security Analysis
 
 As security analysis tools, 'MythX' is used. In order to run this analysis test follow the steps below.
-```
 
+
+In the lendingBorrowing file directory
 ```
+truffle run verify
+```
+run this command line and it will analysis the contract, then return the vulnerabilities if there are.
 
 
 
