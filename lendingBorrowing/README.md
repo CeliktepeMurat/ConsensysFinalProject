@@ -51,6 +51,7 @@ npm install nodejs
 npm install truffle
 npm install ganache-cli -g
 ```
+https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
 Git : https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
 Install git according to your Operating System
 
