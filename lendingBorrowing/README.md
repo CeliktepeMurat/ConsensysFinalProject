@@ -1,26 +1,27 @@
 # Lending and Borrowing Platform
 
 ## INTRODUCTION
-This a lending and borrowing platform which people can lend or borrow money from their friends, family or even co-workers with no collateral. 
-There are few project around this concept which are compound, MakerDAO etc. But they are public and based on none-collateralization.
+This a lending and borrowing platform which people can lend or borrow money from their friends, family or even co-workers with non-collaterilization. 
+There are few project around this concept which are compound, MakerDAO etc. But they are public and based on collateralization.
 
 This can be a bit painfull for people who has little budget (students, young people etc.) and unfamiliar with blockchain world. There should be a system that a person may lend money and borrow whenever needed. When a person lends money, getting interest rate will be another motivation. 
 
 If there would be user-friendly platform and system that people would lend their money to their friends through contract, that would be attractive for them
 
 ## High-Level Solution
-My project comes with private groups and non-collateralization system. In the system, anyone may be able to create a group and invite anyone. Groups will be private and enrolling will be a request-vote based system. The reason of this, if member of groups confirm a person to enroll group, they trust him or her. This trust is collateralization of the group.
+My project comes with private groups and non-collateralization system. In the system, anyone may be able to create a group and invite anyone. Groups will be private and enrolling will be a request-vote based system. The reason of this, if member of groups confirm a person to enroll group, they trust each other. This trust is collateralization of the group.
+
+Every member can lend money to group and if anyone borrows this lended money, member starts to earn interest. This interest rate is identified from beginning by group creator but it can change through voting. This system allows people who have little budget and unfamiliar about blockchain lend and borrow money among their own circle. Esspecially, this system works well among students. Platform's interface is so simple and anyone can interact easily. Then if a group member needs a money, no more a banking lending with high interest rate is needed. He or she can borrow money from group.  
 
 If 80% of group member confirm a person to enroll, this person will be added to group. A person should send minimum amount that identified while group creation from creator. 
 
-Each group has own balance and this balance will be invested compound. Interest income that earned from compound, will be allocated between group member according to their lending rate. 
+This feature is not implemented yet, but when a group member lends money, as long as this money is not borrowed, member can deposit this money to Compound Finance to earn interest rate even money is not lended. This process will not be hard to do because of interface desing and web3 library. Anybody will easily deposit money to Compound Finance via a button. 
 
-Two type of lending will be considered. One of them is will invest to compound, another is will stay inside the contract to be borrowed. When someone wants to lend amount, the amount of this person will split. The proportion wil be specified from creator at beginning. For example, let say that the proportion of amount to invest is 70%. When someone wants to lend money, the 70% of money will invest to compound and 30% of money will stay inside the contract. 
-Everybody will be able to borrow money according to their lending amount. The proportions may be identified differently.
+
 
 ## FUTURE TO-DO
 The contract does not handle some situations that mentioned above.
-- The first one is, splitting lended money two seperate portion is hard-coded. Normally, creator of group will decide to these rates.
+- The first one is, there is no function to handle deposit money to Compound Finance, it will be implemented soon. For this issue, firstly a decesion would be certain. The thing is deciding peer-to-peer lending borrowing or using this contract as a pool. 
 
 - Another thing is, contract has not any function to handle interest rate, calculate the interest rate and share according to proportion of lended amounts. This feature did not implement because, a stable coin is not exist in this project, so after the stable coin implementation, the function will be added.
 
@@ -173,7 +174,7 @@ After all this step, ın the lendingBorrowing directory, run the followed comman
 truffle run verify
 ```
 
-It will analysis the contract, then return the vulnerabilities if there are.
+It will analyze the contract, then return the vulnerabilities if there are.
 
 
 
