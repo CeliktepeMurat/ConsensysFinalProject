@@ -94,6 +94,11 @@ Now, you are ready to interact with contract via ui
 
 > ### **Important Note: Each time you change your metamask account, you have to refresh the page!**
 
+**Group Functions Video: ** 
+https://www.dropbox.com/s/3no7hgwgxqosk59/groupFunctions.mov?dl=0
+
+**Request Function Video: ** 
+https://www.dropbox.com/s/9a508gcrst73jsx/requestFunction.mov?dl=0
 
 ### Creating a Group
 
