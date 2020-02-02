@@ -25,12 +25,12 @@ class GroupProfile extends Component {
         requests: [],
 
         activeItem: 'details',
-        amountToGroup: "",
-        amountToCompound: "",
+        amountLended: "",
+        /* amountToCompound: "", */
         amountToBorrow: "",
         amountToWithdraw: "",
         amountToPayBack: "",
-        depositPending: "",
+        /* depositPending: "", */
 
         returnMessageLending: "Amount successfully lended. Check group details.",
         returnMessageBorrowing: "Amount successfully borrowed. Check group details.",
@@ -78,8 +78,9 @@ class GroupProfile extends Component {
         for (let index = 0; index < requestsArrayLength; index++) {
             
             let request = await contract.methods.getRequest(groupName,index).call({from: account});
-
-            if (request[2] === false && request[0] !== "") {
+            
+            
+            if (request[2] === "0" && request[0] !== "") {
                 newRequests.push(request);
             }   
         }
@@ -95,7 +96,7 @@ class GroupProfile extends Component {
 
         const group = await contract.methods.groups(groupName).call({from: account});
         const debt = await contract.methods.checkMemberDebtStatus(groupName).call({from: account});
-        const depositPending = await contract.methods.getDepositPending(account).call();
+/*         const depositPending = await contract.methods.getDepositPending(account).call(); */
 
         
         this.setState({
@@ -105,9 +106,9 @@ class GroupProfile extends Component {
             isOpen: group[3],
             numberOfMember: group[4],
             amountBorrowed: debt[0],
-            amountToGroup: debt[1],
-            amountToCompound: debt[2],
-            depositPending: depositPending,
+            amountLended: debt[1],
+/*             amountToCompound: debt[2], */
+            /* depositPending: depositPending, */
             
         })
     }
@@ -239,7 +240,7 @@ class GroupProfile extends Component {
         this.getGroup();
     }
     
-    depositToCompound = async () => {
+    /* depositToCompound = async () => {
         const amount = this.state.depositPending;
         const groupName = this.state.groupName;
         const contract = this.state.contract;
@@ -256,7 +257,7 @@ class GroupProfile extends Component {
         })
         
         this.getGroup();
-    }
+    } */
 
     handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 
@@ -300,16 +301,16 @@ class GroupProfile extends Component {
                     <Card fluid color="blue">
                         <Card.Content
                         header="Amount Lended to Group"
-                        description={String(this.state.amountToGroup)}
+                        description={String(this.state.amountLended)}
                         />
                     </Card>
 
-                    <Card fluid color="blue">
+                    {/* <Card fluid color="blue">
                         <Card.Content
                         header="Amount deposited to Compound"
                         description={String(this.state.amountToCompound)}
                         />
-                    </Card>
+                    </Card> */}
                     <Card fluid color="blue">
                         <Card.Content
                         header="Amount Borrowed"
@@ -326,7 +327,7 @@ class GroupProfile extends Component {
                         <Table.Row>
                             <Table.HeaderCell singleLine>Name and Surname</Table.HeaderCell>
                             <Table.HeaderCell singleLine>Member Address</Table.HeaderCell>
-                            <Table.HeaderCell>Completed</Table.HeaderCell>
+                            <Table.HeaderCell>State</Table.HeaderCell>
                             <Table.HeaderCell>Approvals Count</Table.HeaderCell>
                             <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
@@ -445,7 +446,7 @@ class GroupProfile extends Component {
                       
                       </Form>
     }
-    else if (activeItem === "depositToCompound") {
+/*     else if (activeItem === "depositToCompound") {
         content = <Form>
                       <Form.Group>
                       <Label style={{paddingTop: 10, width: 150}} key="medium" size="medium">
@@ -468,7 +469,7 @@ class GroupProfile extends Component {
                         </Form.Field>
                       
                       </Form>
-    }
+    } */
     return (
         <Container className="App">
           <div>
@@ -520,11 +521,11 @@ class GroupProfile extends Component {
                     active={activeItem === 'withdraw'}
                     onClick={this.handleItemClick}
                     />
-                    <Menu.Item
+                    {/* <Menu.Item
                     name='depositToCompound'
                     active={activeItem === 'depositToCompound'}
                     onClick={this.handleItemClick}
-                    />
+                    /> */}
                 </Menu>
                 </Grid.Column>
 

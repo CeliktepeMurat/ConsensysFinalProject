@@ -9,6 +9,8 @@ pragma solidity ^0.5.11;
 contract lendingBorrowing {
     /// @author Murat Çeliktepe
     
+    enum RequestState {onVoting, resolved}
+    
     struct Participant {
         string groupNo;
         address memberAddress;
@@ -25,9 +27,7 @@ contract lendingBorrowing {
         
         mapping(address => bool) members;
         mapping(address => uint) borrowers;
-        
-        mapping(address => uint) depositGroupArray;
-        mapping(address => uint) depositCompoundArray;
+        mapping(address => uint) lenders;
     }
     
     struct Request {
@@ -35,9 +35,9 @@ contract lendingBorrowing {
         string nameSurname;
         uint requestCount;
         address candidate;
-        bool complete;
         uint approvalCount;
         mapping(address => bool) approvals;
+        RequestState requestState;
     }
 
     /* @notice Two types of request array exist. Because, in front end side, we need to return all requests.
@@ -48,12 +48,6 @@ contract lendingBorrowing {
     
     mapping(string => Group) public groups;
     mapping(address => Participant) public participants;
-
-    mapping(address => uint) private depositCompoundPending;
-    
-    /// @notice  This split rates are hard-coded, but normally groups creator will decide to these proportions
-    uint sudoSplitRateForGroup = 40;
-    uint sudoSplitRateForCompound = 60;
     
     /// @notice  Let say this is compound contract address which we will deposit money
     address payable public compoundAddress = 0x877427CCBd3061Affd5c6518bc87799B9Cf3C408;
@@ -117,7 +111,7 @@ contract lendingBorrowing {
         groups[_groupId].numberOfMember -= 1;
         
         // get the amount member lended
-        uint amountLended = groups[_groupId].depositGroupArray[msg.sender];
+        uint amountLended = groups[_groupId].lenders[msg.sender];
         
         // if lended amount is exist, send back to msg.sender
         if (amountLended > 0) {
@@ -134,6 +128,7 @@ contract lendingBorrowing {
     public 
     checkGroupOpen(_groupId)
     {
+        
         // check is already enrolled to group
         require(groups[_groupId].members[msg.sender] != true, "You are already in this group");
         
@@ -142,9 +137,9 @@ contract lendingBorrowing {
             groupId: _groupId,
             nameSurname: _nameSurname,
             candidate: msg.sender,
-            complete: false,
             approvalCount: 0,
-            requestCount: 0
+            requestCount: 0,
+            requestState: RequestState.onVoting
         });
         requestsArray[_groupId].push(newRequest);
         requestsAddressArray[msg.sender] = newRequest;
@@ -161,9 +156,10 @@ contract lendingBorrowing {
     function approveRequest(address _candidateAddress, string memory _groupId, uint _id) 
     public 
     {
-        require(requestsAddressArray[_candidateAddress].complete == false);
-        Request storage request = requestsAddressArray[_candidateAddress];
+        // check that request is on voting
+        require(requestsAddressArray[_candidateAddress].requestState == RequestState.onVoting, "Request is resolved");
         
+        Request storage request = requestsAddressArray[_candidateAddress];
         
         // check that this member did not approve 
         require(!request.approvals[_candidateAddress]);
@@ -176,8 +172,8 @@ contract lendingBorrowing {
         if  ((groups[_groupId].numberOfMember * 80) / 100 < request.approvalCount) {
             addCandidateToGroup(_candidateAddress, _groupId, _id);
             request.approvalCount += 1;
-            request.complete = true;
-            requestsArray[_groupId][_id].complete = true;
+            request.requestState = RequestState.resolved;
+            requestsArray[_groupId][_id].requestState = RequestState.resolved;
             groups[_groupId].requestCount -= 1;
         }
         
@@ -217,21 +213,19 @@ contract lendingBorrowing {
     {
         require(msg.value >= 0, "Please send a valid amount");
         
-        uint amountForGroup = (msg.value * sudoSplitRateForGroup) / 100;
-        uint amountForCompound = (msg.value * sudoSplitRateForCompound) / 100;
+        groups[_groupId].lenders[msg.sender] += msg.value;
         
-        groups[_groupId].groupBalance += amountForGroup;
-        groups[_groupId].depositGroupArray[msg.sender] += amountForGroup;
-        depositCompoundPending[msg.sender] += amountForCompound;
+        groups[_groupId].groupBalance += msg.value;
         
         emit LogLendingTransaction(msg.sender, msg.value, groups[_groupId].groupBalance);
         
     }
     
+    
     /*
     @notice This function deposit money from pending array to compound. Before doing this,
     it check whether member has money in array or not
-    */
+    
     function depositToCompound(string memory _groupId) 
     public 
     payable
@@ -245,6 +239,8 @@ contract lendingBorrowing {
         address(compoundAddress).transfer(amountForCompound);
         
     }
+    */
+    
     
     /*
     @notice This function allow members to borrow moeny from group. 
@@ -310,7 +306,7 @@ contract lendingBorrowing {
             debt = 0;
             
             // lend amount exceed the debt to group
-            msg.sender.transfer(msg.value - debt);
+            groups[_groupId].lenders[msg.sender] += msg.value - debt;
             
             emit LogPayDebtedBack(msg.sender, msg.value, debt, groups[_groupId].groupBalance);
             
@@ -333,11 +329,11 @@ contract lendingBorrowing {
         // check member has debt
         require(debt == 0, "you have debt");
 
-        uint lendedAmount = groups[_groupId].depositGroupArray[msg.sender];
+        uint lendedAmount = groups[_groupId].lenders[msg.sender];
         require(lendedAmount != 0, "You do not have lended money");
         require(groups[_groupId].groupBalance >= msg.value, "There is no enough balance");
         
-        groups[_groupId].depositGroupArray[msg.sender] -= msg.value;
+        groups[_groupId].lenders[msg.sender] -= msg.value;
         groups[_groupId].groupBalance -= msg.value;
         
         msg.sender.transfer(msg.value);
@@ -378,16 +374,16 @@ contract lendingBorrowing {
     public 
     view 
     checkGroupOpen(_groupId)
-    returns(uint, uint, uint) 
+    returns(uint, uint) 
     {
-        return (uint(groups[_groupId].borrowers[msg.sender]), uint(groups[_groupId].depositGroupArray[msg.sender]), uint(groups[_groupId].depositCompoundArray[msg.sender]));
+        return (uint(groups[_groupId].borrowers[msg.sender]), uint(groups[_groupId].lenders[msg.sender]));
     }
 
     function getRequest(string memory _groupId, uint _id) 
     public 
     view 
-    returns(string memory, address, bool, uint) {
-        return (requestsArray[_groupId][_id].nameSurname, requestsArray[_groupId][_id].candidate, requestsArray[_groupId][_id].complete, requestsArray[_groupId][_id].approvalCount);
+    returns(string memory, address, RequestState, uint) {
+        return (requestsArray[_groupId][_id].nameSurname, requestsArray[_groupId][_id].candidate, requestsArray[_groupId][_id].requestState, requestsArray[_groupId][_id].approvalCount);
     }
     
     function getRequestArrayLength(string memory _groupId) 
@@ -397,11 +393,13 @@ contract lendingBorrowing {
         return (requestsArray[_groupId].length);
     }
     
+    /*
     function getDepositPending(address _memberAddress) 
     public 
     view 
     returns(uint) {
         return (depositCompoundPending[_memberAddress]);
     }
+    */
     
 }
