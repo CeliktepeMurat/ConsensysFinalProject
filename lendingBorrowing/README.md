@@ -51,6 +51,9 @@ npm install nodejs
 npm install truffle
 npm install ganache-cli -g
 ```
+Git : https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
+Install git according to your Operating System
+
 For installing metamask, search 'metamask chrome extension' on google and install, then create a wallet
 
 > For windows users, please download a linux virtual machine and run on it
