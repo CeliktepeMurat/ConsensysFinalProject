@@ -29,48 +29,64 @@ This modifier is used in all group's function to be sure that there is no any mi
 modifier ensures that just member of group can use group's function.
 
 
-## Withdrawal Design Pattern
-In this contract, lending process has a desing pattern to handle with some bugs. Lending function is like that;
+## State Machine
+In this contract, Request process has a state issue. When a request is created, the state of this request is assign to onVoting. 
 ```
-function lending(string memory _groupId) 
+function enroll(string memory _groupId, string memory _nameSurname) 
     public 
-    payable
-    checkEnrolled(_groupId) 
     checkGroupOpen(_groupId)
     {
-        require(msg.value >= 0, "Please send a valid amount");
         
-        uint amountForGroup = (msg.value * sudoSplitRateForGroup) / 100;
-        uint amountForCompound = (msg.value * sudoSplitRateForCompound) / 100;
+        // check is already enrolled to group
+        require(groups[_groupId].members[msg.sender] != true, "You are already in this group");
         
-        groups[_groupId].groupBalance += amountForGroup;
-        groups[_groupId].depositGroupArray[msg.sender] += amountForGroup;
-        depositCompoundPending[msg.sender] += amountForCompound;
+        // Create Request to enroll
+        Request memory newRequest = Request({
+            groupId: _groupId,
+            nameSurname: _nameSurname,
+            candidate: msg.sender,
+            approvalCount: 0,
+            requestCount: 0,
+            requestState: RequestState.onVoting  // here assinging state to onVoting
+        });
+        requestsArray[_groupId].push(newRequest);
+        requestsAddressArray[msg.sender] = newRequest;
+        groups[_groupId].requestCount += 1;
         
-        emit LogLendingTransaction(msg.sender, msg.value, groups[_groupId].groupBalance);
+        emit LogCreatedRequest(_groupId, _nameSurname, msg.sender);
         
     }
 ```
-Here, the amount is splitting two seperate value. Amount to deposit compound is writed to a pending mapping. After that there is another function to deposit;
-
+After request is end, it is assigning to resolved state. This is because when a request is ended, stop the voting process for this person. In the approve request function, it is checking request state from the beginning.
 ```
-function depositToCompound(string memory _groupId) 
+function approveRequest(address _candidateAddress, string memory _groupId, uint _id) 
     public 
-    payable
-    checkEnrolled(_groupId) 
-    checkGroupOpen(_groupId)
     {
-        require(depositCompoundPending[msg.sender] != 0, "you do not have amount to deposit");
-        uint amountForCompound = depositCompoundPending[msg.sender];
+        // check that request is on voting //
+        require(requestsAddressArray[_candidateAddress].requestState == RequestState.onVoting, "Request is resolved");
         
-        groups[_groupId].depositCompoundArray[msg.sender] += amountForCompound;
+        Request storage request = requestsAddressArray[_candidateAddress];
         
-        address(compoundAddress).transfer(amountForCompound);
+        // check that this member did not approve 
+        require(!request.approvals[_candidateAddress]);
+        
+        request.approvals[msg.sender] == true;
+        request.approvalCount += 1;
+        requestsArray[_groupId][_id].approvalCount += 1;
+        
+        // if 80% of members approve that candidate can enroll, then add candidate to group
+        if  ((groups[_groupId].numberOfMember * 80) / 100 < request.approvalCount) {
+            addCandidateToGroup(_candidateAddress, _groupId, _id);
+            request.approvalCount += 1;
+            request.requestState = RequestState.resolved;
+            requestsArray[_groupId][_id].requestState = RequestState.resolved;
+            groups[_groupId].requestCount -= 1;
+        }
+        
+        emit LogApprovedRequest(msg.sender, request.approvalCount);
         
     }
 ```
-
-This function first look at that is there a amount in pending mapping then read the pending value and deposit it to compound. This way is more secure against to bug or vulnerable transactions. 
 
 
 ## Fail early and fail loud
