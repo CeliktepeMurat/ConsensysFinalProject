@@ -99,7 +99,7 @@ Now, you are ready to interact with contract via ui
 
 > ***Group is a kind of private concepts in this project. Everybody can create a group and invite their friend.*** 
 
-
+<img width="1142" alt="Ekran Resmi 2020-02-02 18 42 50" src="https://user-images.githubusercontent.com/26026913/73610755-e338c100-45eb-11ea-9da8-d0d4fbcf7a2c.png">
 
 - In order to create a group, click the 'Create Group' button and go to Group creation page
 - Group name and your name-surname is enough to creation
@@ -107,17 +107,27 @@ Now, you are ready to interact with contract via ui
 - When you confirm, group will be successfully created
 
 ### Interact with group 
+
+<img width="941" alt="Ekran Resmi 2020-02-02 18 21 07" src="https://user-images.githubusercontent.com/26026913/73610594-2eea6b00-45ea-11ea-9b39-1dbdbb7772cb.png">
+
 - Type your group name to search bar and it will come up with some detail
 - Click the 'view more details' button to go group profile page
 - Here is where will we make all things releated to group
 
 ### Group Profile Page
+<img width="1138" alt="Ekran Resmi 2020-02-02 18 22 31" src="https://user-images.githubusercontent.com/26026913/73610762-fba8db80-45eb-11ea-8fc3-02c4083cca8e.png">
 In this page, there are 5 functionalities which you can do;
+
 1. Confirm or reject requests
+<img width="1144" alt="Ekran Resmi 2020-02-02 18 23 23" src="https://user-images.githubusercontent.com/26026913/73610767-06fc0700-45ec-11ea-8301-770b2b8ea766.png">
 2. Lending
+<img width="1144" alt="Ekran Resmi 2020-02-02 18 24 12" src="https://user-images.githubusercontent.com/26026913/73610771-14b18c80-45ec-11ea-9d0a-79a98cf65d96.png">
 3. Borrowing
+<img width="1144" alt="Ekran Resmi 2020-02-02 18 24 27" src="https://user-images.githubusercontent.com/26026913/73610774-1da25e00-45ec-11ea-9e9c-efcedd1576b6.png">
 4. Pay debt back
+<img width="1144" alt="Ekran Resmi 2020-02-02 18 24 45" src="https://user-images.githubusercontent.com/26026913/73610779-272bc600-45ec-11ea-93ea-f8b32a1ac9ce.png">
 5. withdraw
+<img width="1144" alt="Ekran Resmi 2020-02-02 18 24 52" src="https://user-images.githubusercontent.com/26026913/73610783-314dc480-45ec-11ea-9358-a6c995ed5133.png">
 
 
 ## Testing
