@@ -43,6 +43,7 @@ You can download this all repository from this github page and run on your on lo
 - Ganache-cli
 - git
 - Metamask
+- npm
 
 ### Install
 ```
@@ -52,6 +53,8 @@ npm install ganache-cli -g
 
 Git : https://git-scm.com/book/en/v2/Getting-Started-Installing-Git                         
 Install git according to your Operating System
+
+Npm: https://linuxize.com/post/how-to-install-node-js-on-ubuntu-18.04
 
 For installing metamask, search 'metamask chrome extension' on google and install, then create a wallet
 
