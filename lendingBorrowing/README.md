@@ -39,7 +39,6 @@ The contract does not handle some situations that mentioned above.
 You can download this all repository from this github page and run on your on local machine. 
 
 ### Requirements
-- NodeJs
 - Truffle
 - Ganache-cli
 - git
@@ -47,7 +46,6 @@ You can download this all repository from this github page and run on your on lo
 
 ### Install
 ```
-npm install nodejs
 npm install truffle
 npm install ganache-cli -g
 ```
