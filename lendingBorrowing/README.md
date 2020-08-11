@@ -1,7 +1,7 @@
 # Lending and Borrowing Platform
 
 ## INTRODUCTION
-This a lending and borrowing platform which people can lend or borrow money from their friends, family or even co-workers under collateralization. 
+This is a lending and borrowing platform which people can lend or borrow money from their friends, family or even co-workers under collateralization. 
 There are few project around this concept which are compound, MakerDAO etc. But they are public and based on one type collateralization.
 
 This can be a bit painfull for people who has little budget (students, young people etc.) and unfamiliar with blockchain world. There should be a system that a person may lend money and borrow whenever needed. When a person lends money, getting interest rate will be another motivation. Besides that there should be many pool with different collateral rate, different interest rates etc. This means that the pools created with different rules will provide flexibility  and  chance of choice to people who has different budgets and different wish.
