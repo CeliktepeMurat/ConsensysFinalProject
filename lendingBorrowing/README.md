@@ -1,22 +1,19 @@
 # Lending and Borrowing Platform
 
 ## INTRODUCTION
-This a lending and borrowing platform which people can lend or borrow money from their friends, family or even co-workers with non-collaterilization. 
-There are few project around this concept which are compound, MakerDAO etc. But they are public and based on collateralization.
+This a lending and borrowing platform which people can lend or borrow money from their friends, family or even co-workers under collateralization. 
+There are few project around this concept which are compound, MakerDAO etc. But they are public and based on one type collateralization.
 
-This can be a bit painfull for people who has little budget (students, young people etc.) and unfamiliar with blockchain world. There should be a system that a person may lend money and borrow whenever needed. When a person lends money, getting interest rate will be another motivation. 
-
-If there would be user-friendly platform and system that people would lend their money to their friends through contract, that would be attractive for them
+This can be a bit painfull for people who has little budget (students, young people etc.) and unfamiliar with blockchain world. There should be a system that a person may lend money and borrow whenever needed. When a person lends money, getting interest rate will be another motivation. Besides that there should be many pool with different collateral rate, different interest rates etc. This means that the pools created with different rules will provide flexibility  and  chance of choice to people who has different budgets and different wish.
+If there would be user-friendly platform and system that people would lend their money to their pool that is chosen through contract, that would be attractive for them
 
 ## High-Level Solution
-My project comes with private groups and non-collateralization system. In the system, anyone may be able to create a group and invite anyone. Groups will be private and enrolling will be a request-vote based system. The reason of this, if member of groups confirm a person to enroll group, they trust each other. This trust is collateralization of the group.
+My project comes with private pools and with their own collateralization system. In the system, anyone who fullfilling the requirements (will be determined later) may be able to create a pool and invite anyone. Pools will be either private or public and enrolling to private pool will be a request-vote based system.
 
-Every member can lend money to group and if anyone borrows this lended money, member starts to earn interest. This interest rate is identified from beginning by group creator but it can change through voting. This system allows people who have little budget and unfamiliar about blockchain lend and borrow money among their own circle. Esspecially, this system works well among students. Platform's interface is so simple and anyone can interact easily. Then if a group member needs a money, no more a banking lending with high interest rate is needed. He or she can borrow money from group.  
-
-If 80% of group member confirm a person to enroll, this person will be added to group. A person should send minimum amount that identified while group creation from creator. 
+Every member can lend money to pool and if anyone borrows this lended money, member starts to earn interest. This interest rate is identified from beginning by pool creator but it can change through voting. This system allows people who have little budget and unfamiliar about blockchain lend and borrow money among their own circle. Esspecially, this system works well among students. Platform's interface is so simple and anyone can interact easily. Then if a group member needs a money, no more a banking lending with high interest rate is needed. He or she can borrow money from group.  
+For private pool, if 80% of pool member confirm a person to enroll, this person will be added to pool. 
 
 This feature is not implemented yet, but when a group member lends money, as long as this money is not borrowed, member can deposit this money to Compound Finance to earn interest rate even money is not lended. This process will not be hard to do because of interface desing and web3 library. Anybody will easily deposit money to Compound Finance via a button. 
-
 
 
 ## FUTURE TO-DO
